@@ -9,6 +9,8 @@ A live feed of the House and Senate floor in plain English. Every item is labele
 - **COMING UP**: postponed votes, cloture filings, what's scheduled next
 - **ROUTINE**: prayer, the journal, quorum calls (hidden by default)
 
+Bills show their plain-English names. Clicking one opens a page for that bill with its full history from Congress.gov (introduction, committee, floor votes, including the procedural rule votes that set it up), the CRS summary, links (Congress.gov, the bill text, GovTrack, CBO cost estimates, committee reports) and recent news headlines.
+
 Each item has a one-line explanation, the official text, the vote tally with the R and D split, and a link to the roll call. A procedural vote on a House "rule" also names the bill it's actually about. The **Votes table** view has a sortable list of every recorded vote.
 
 ## Live site
@@ -53,6 +55,8 @@ With a key set, each significant item also gets a neutral one-sentence explanati
 - **House floor log**: `clerk.house.gov/floor/YYYYMMDD.xml`, the Clerk's timestamped floor actions, updated in near real time
 - **House roll calls**: `clerk.house.gov/evs/YYYY/rollNNN.xml`, for the question, the bill title and the party split
 - **Senate floor log**: `periodicalpress.senate.gov/on-the-floor`, the Periodical Press Gallery's running log. It has no timestamps, so those entries show a `~` and an approximate time.
+- **Bill names and history**: GovInfo's public BILLSTATUS XML (`govinfo.gov/bulkdata/BILLSTATUS/...`), refreshed every 3 hours per bill
+- **News**: a Google News search on the bill number and short title, for bills active in the last two weeks
 - **Senate roll calls**: the `senate.gov` session vote list and per-vote XML, for the exact time, 60-vote thresholds and the party split
 
 ## Notes

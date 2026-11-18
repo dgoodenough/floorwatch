@@ -93,7 +93,24 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #decoder dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:14px}
 #decoder dt{font-weight:650}
 #decoder dd{margin:0;color:var(--muted)}
-@media (max-width:900px){.cols,.now{grid-template-columns:1fr}.hide-sm{display:none}}
+.billchip{display:inline-flex;gap:6px;align-items:baseline;text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:2px 8px;margin:3px 4px 0 0;font-size:13px;background:var(--bg);max-width:100%}
+.billchip:hover{border-color:var(--ink)}
+.billchip b{white-space:nowrap}.billchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.item.stage{border-left-color:var(--routine)} .b-stage{background:var(--routine-bg);color:var(--ink)}
+#billView{display:none;max-width:980px;margin:0 auto}
+.bv-back{font-size:13px;color:var(--muted);text-decoration:none}
+.bv-ref{font-size:13px;font-weight:700;letter-spacing:.05em;color:var(--muted);margin-top:10px}
+.bv-name{font-size:24px;font-weight:700;margin:2px 0 4px;letter-spacing:-.01em}
+.bv-off{color:var(--muted)} .bv-meta{font-size:13px;color:var(--muted);margin-top:6px}
+.bv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.box h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:4px 0 8px}
+.box ul{margin:0;padding:0;list-style:none} .box li{margin:0 0 8px;font-size:14px}
+.box li .src{font-size:12px;color:var(--muted)}
+.kind{font-size:10.5px;font-weight:700;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin-right:6px}
+.summary{font-size:14px;margin-top:10px}
+.dayhead{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);margin:16px 0 6px;text-transform:uppercase}
+@media (max-width:900px){.cols,.now,.bv-grid{grid-template-columns:1fr}.hide-sm{display:none}}
 </style>
 </head>
 <body>
@@ -144,6 +161,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   <section class="now" id="now"></section>
   <section id="feedView"></section>
   <section id="tableView" style="display:none"></section>
+  <section id="billView"></section>
 </main>
 <script>
 const S = {view:"feed", ch:"both", hideRoutine:true, votesOnly:false, q:"", sort:{key:"ts",asc:false}, data:null, lastOk:0};
@@ -169,13 +187,21 @@ function voteHtml(it){
     ${v.url ? `<a class="link" href="${esc(v.url)}" target="_blank" rel="noopener">roll call ↗</a>`:""}
   </div>`;
 }
+function chip(key){
+  const b = (S.data && S.data.bills || {})[key] || {ref:key, name:""};
+  return `<a class="billchip" href="#bill-${key.toLowerCase()}" title="${esc(b.name)}"><b>${esc(b.ref)}</b>${b.name?`<span>${esc(b.name)}</span>`:""}</a>`;
+}
+function chips(keys){ return (keys||[]).map(chip).join(""); }
 function itemHtml(it, showCh){
-  const measure = it.title ? `<div class="measure"><b>${esc((it.refs||[])[0]||"")}</b> ${esc(it.title)}</div>`
+  const keys = (it.bill_keys||[]).filter(k => k !== S.billKey || it.about);
+  const measure = keys.length ? `<div class="measure">${it.about?"About ":""}${chips(keys)}</div>`
+                : S.billKey ? ""
+                : it.title ? `<div class="measure"><b>${esc((it.refs||[])[0]||"")}</b> ${esc(it.title)}</div>`
                 : (it.about ? `<div class="measure">About <b>${esc(it.about)}</b></div>`
                 : ((it.refs||[]).length ? `<div class="measure"><b>${esc(it.refs.join(", "))}</b></div>` : ""));
   return `<div class="item ${it.kind}">
     <div class="row1">
-      <span class="time">${it.approx&&it.is_roll?fmtDay(it.ts):fmtTime(it.ts)}${it.approx?' <span class="approx" title="The Senate log has no timestamps; this is roughly when it appeared">~</span>':""}</span>
+      <span class="time">${S.billKey ? (it.dateonly ? "" : fmtTime(it.ts)) : (it.approx&&it.is_roll?fmtDay(it.ts):fmtTime(it.ts))}${it.approx?' <span class="approx" title="The Senate log has no timestamps; this is roughly when it appeared">~</span>':""}</span>
       ${showCh ? `<span class="ch ${it.chamber}">${it.chamber.toUpperCase()}</span>`:""}
       <span class="badge b-${it.kind}">${esc(it.badge)}</span>
       <span class="label">${esc(it.label)}</span>
@@ -202,6 +228,7 @@ function renderNow(){
     out.push(`<div class="nowcard ${ch}"><div class="k">${ch.toUpperCase()} · RIGHT NOW ${day?`<span style="font-weight:500">· ${fmtDay(day+"T12:00")}</span>`:""}
       ${n.label?`<span class="badge b-${n.kind}">${esc(n.label)}</span>`:""}</div>
       <div class="t">${esc(n.text||"—")}</div>${n.explain?`<div class="e">${esc(n.explain)}</div>`:""}
+      ${(n.bill_keys||[]).length?`<div>${chips(n.bill_keys)}</div>`:""}
       ${n.next?`<div class="e"><span class="badge b-schedule">NEXT</span> ${esc(n.next)}</div>`:""}</div>`);
   }
   $("#now").innerHTML = out.join("");
@@ -218,13 +245,13 @@ function renderFeed(){
   $("#feedView").innerHTML = `<div class="cols" style="${chs.length===1?"grid-template-columns:1fr":""}">${cols.join("")}</div>`;
 }
 const COLS = [
-  ["ts","When"],["chamber","Chamber"],["badge","Type"],["label","What it is"],["measure","Measure"],
+  ["ts","When"],["chamber","Chamber"],["badge","Type"],["label","What it is"],["measure","Bill"],
   ["title","Title / question"],["result","Result"],["yeas","Yea"],["nays","Nay"],["R","R"],["D","D"],["explain","Meaning"]];
 function cell(it,k){
   const v = it.vote||{};
   switch(k){
     case "ts": return it.ts; case "result": return v.result||""; case "yeas": return v.yeas??-1; case "nays": return v.nays??-1;
-    case "measure": return v.measure || (it.refs||[])[0] || ""; case "title": return v.title || it.title || v.question || it.text;
+    case "measure": { const k=(it.bill_keys||[])[0]; const b=k&&S.data.bills&&S.data.bills[k]; return b ? (b.name||b.ref) : (v.measure || (it.refs||[])[0] || ""); } case "title": return v.title || it.title || v.question || it.text;
     case "R": case "D": { const p=(v.party||{})[k]; return p ? p.y - p.n : -999; }
     default: return it[k]||"";
   }
@@ -241,9 +268,9 @@ function renderTable(){
       <td><span class="ch ${it.chamber}">${it.chamber.toUpperCase()}</span></td>
       <td><span class="badge b-${it.kind}">${esc(it.badge)}</span></td>
       <td>${esc(it.label)}</td>
-      <td style="white-space:nowrap">${v.url?`<a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(cell(it,"measure"))}</a>`:esc(cell(it,"measure"))}</td>
+      <td style="min-width:150px">${(it.bill_keys||[]).length ? chips(it.bill_keys) : esc(cell(it,"measure"))}</td>
       <td>${esc(cell(it,"title"))}${v.question&&v.title?`<div class="link">${esc(v.question)}</div>`:""}${it.ai?`<div class="link">${esc(it.ai)}</div>`:""}</td>
-      <td class="res ${passed(v.result)?"pass":"fail"}">${esc(v.result||"")}</td>
+      <td class="res ${passed(v.result)?"pass":"fail"}">${esc(v.result||"")}${v.url?` <a class="link" href="${esc(v.url)}" target="_blank" rel="noopener">↗</a>`:""}</td>
       <td class="num">${v.yeas??""}</td><td class="num">${v.nays??""}</td>
       <td class="num">${pc("R")}</td><td class="num">${pc("D")}</td>
       <td class="hide-sm">${esc(it.explain)}</td></tr>`; }).join("");
@@ -252,6 +279,51 @@ function renderTable(){
   document.querySelectorAll("#tableView th").forEach(th=>th.onclick=()=>{ const k=th.dataset.k;
     S.sort = {key:k, asc: S.sort.key===k ? !S.sort.asc : (k!=="ts" && k!=="yeas" && k!=="nays")}; renderTable(); });
 }
+const billCache = {};
+async function fetchBill(key){
+  if(!GH){ const r = await fetch("api/bill/"+key.toLowerCase(),{cache:"no-store"}); if(!r.ok) throw 0; return r.json(); }
+  const ref = lastSha || "data";
+  const r = await fetch(`https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${ref}/bills/${key.toLowerCase()}.json`);
+  if(!r.ok) throw 0; return r.json();
+}
+async function loadBill(key){
+  try{ billCache[key] = await fetchBill(key); }catch(e){ billCache[key] = billCache[key] || {missing:true}; }
+  if(S.billKey===key) renderBill();
+}
+function renderBill(){
+  const key = S.billKey, b = billCache[key], el = $("#billView");
+  const idx = (S.data && S.data.bills || {})[key] || {};
+  if(!b){ el.innerHTML = `<a class="bv-back" href="#">← Back to the floor</a><div class="empty" style="margin-top:14px">Loading ${esc(idx.ref||key)}…</div>`; return; }
+  if(b.missing){ el.innerHTML = `<a class="bv-back" href="#">← Back to the floor</a><div class="empty" style="margin-top:14px">No page for ${esc(idx.ref||key)} yet. It appears after the bill shows up on the floor or in a vote.</div>`; return; }
+  const groups = {}; for(const l of b.links){ (groups[l.kind] = groups[l.kind] || []).push(l); }
+  const linkHtml = Object.entries(groups).map(([k,ls]) => ls.map(l =>
+      `<li><span class="kind">${esc(k)}</span><a href="${esc(l.url)}" ${l.url.startsWith("#")?"":'target="_blank" rel="noopener"'}>${esc(l.title)}</a>${l.date?` <span class="src">· ${esc(l.date)}</span>`:""}</li>`).join("")).join("");
+  const newsHtml = b.news.length ? b.news.map(n => `<li><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a><div class="src">${esc(n.source)}${n.date?" · "+esc(n.date):""}</div></li>`).join("")
+     : `<li class="src">No recent coverage found${b.timeline.some(t=>t.ts.slice(0,10)>=new Date(Date.now()-14*864e5).toISOString().slice(0,10))?"":" (news is only looked up for bills active in the last two weeks)"}.</li>`;
+  const list = b.timeline.filter(keep);
+  let day = "", tl = "";
+  for(const it of list){ const d = new Date(it.ts).toLocaleDateString([], {weekday:"short", month:"short", day:"numeric", year:"numeric"});
+    if(d!==day){ tl += `<div class="dayhead">${d}</div>`; day = d; } tl += itemHtml(it, true); }
+  const hidden = b.timeline.length - list.length;
+  el.innerHTML = `<a class="bv-back" href="#">← Back to the floor</a>
+    <div class="bv-ref">${esc(b.ref)} · ${esc(b.congress)}th Congress${b.policy?" · "+esc(b.policy):""}</div>
+    <div class="bv-name">${esc(b.name || b.ref)}</div>
+    ${b.official && b.official!==b.name ? `<div class="bv-off">${esc(b.official)}</div>`:""}
+    <div class="bv-meta">${b.sponsor?"Sponsor: "+esc(b.sponsor):""}${b.introduced?" · Introduced "+esc(b.introduced):""}</div>
+    ${b.rule_for?`<div class="measure" style="margin-top:8px">This resolution sets the debate rules for ${chips([b.rule_for.replace(/[^A-Za-z0-9]/g,"").toUpperCase()])}</div>`:""}
+    ${b.summary?`<div class="summary box"><h3>What it does (Congressional Research Service summary)</h3>${esc(b.summary.length>700?b.summary.slice(0,700)+"…":b.summary)}</div>`:""}
+    <div class="bv-grid"><div class="box"><h3>Links and analysis</h3><ul>${linkHtml}</ul></div>
+      <div class="box"><h3>In the news</h3><ul>${newsHtml}</ul></div></div>
+    <h2 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 0">Timeline · ${list.length} events${hidden?` · ${hidden} routine hidden`:""}${b.history_loaded?"":" · full history not available yet"}</h2>
+    ${tl || `<div class="empty">Nothing yet.</div>`}`;
+}
+function route(){
+  const m = location.hash.match(/^#bill-([a-z0-9]+)$/i);
+  S.billKey = m ? m[1].toUpperCase() : null;
+  if(S.billKey){ window.scrollTo(0,0); loadBill(S.billKey); }
+  render();
+}
+window.addEventListener("hashchange", route);
 function renderStatus(){
   const st = S.data.status;
   const fresh = Date.now() - new Date(st.updated).getTime() < (GH ? 20 : 3) * 60000;
@@ -264,9 +336,14 @@ function renderStatus(){
 }
 function render(){
   if(!S.data) return;
-  renderStatus(); renderNow();
-  $("#feedView").style.display = S.view==="feed" ? "" : "none";
-  $("#tableView").style.display = S.view==="table" ? "" : "none";
+  renderStatus();
+  const bill = !!S.billKey;
+  $("#now").style.display = bill ? "none" : "";
+  $("#billView").style.display = bill ? "block" : "none";
+  $("#feedView").style.display = !bill && S.view==="feed" ? "" : "none";
+  $("#tableView").style.display = !bill && S.view==="table" ? "" : "none";
+  if(bill){ renderBill(); return; }
+  renderNow();
   S.view==="feed" ? renderFeed() : renderTable();
 }
 // Two ways to get data: the local server (/api/feed), or, when hosted on GitHub Pages,
@@ -289,16 +366,18 @@ async function fetchFeed(){
 async function load(){
   try{ S.data = await fetchFeed(); S.lastOk = Date.now(); }
   catch(e){ /* keep showing the last data */ }
+  if(S.billKey) loadBill(S.billKey);
   render();
 }
 function seg(id, attr, key){ document.querySelectorAll(`#${id} button`).forEach(b=>b.onclick=()=>{
-  document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle("on",x===b)); S[key]=b.dataset[attr]; render(); }); }
+  document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle("on",x===b)); S[key]=b.dataset[attr];
+  if(S.billKey){ location.hash = ""; } render(); }); }
 seg("viewSeg","v","view"); seg("chSeg","c","ch");
 $("#hideRoutine").onclick = e => { S.hideRoutine=!S.hideRoutine; e.target.classList.toggle("on",S.hideRoutine); render(); };
 $("#votesOnly").onclick = e => { S.votesOnly=!S.votesOnly; e.target.classList.toggle("on",S.votesOnly); render(); };
 $("#q").oninput = e => { S.q=e.target.value.trim(); render(); };
 $("#decoderBtn").onclick = e => { $("#decoder").classList.toggle("open"); e.target.classList.toggle("on"); };
-load(); setInterval(load, GH ? 90000 : 30000);
+route(); load(); setInterval(load, GH ? 90000 : 30000);
 </script>
 </body>
 </html>

@@ -26,6 +26,7 @@ import threading
 import time
 import traceback
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from html import unescape
@@ -78,10 +79,12 @@ class Fetcher:
         self.errors: dict[str, str] = {}
         self.missing: set[str] = set()
 
-    def get(self, url: str, immutable: bool = False, timeout: int = 20) -> bytes | None:
+    def get(self, url: str, immutable: bool = False, timeout: int = 20, ttl: int | None = None) -> bytes | None:
         key = re.sub(r"[^A-Za-z0-9._-]", "_", url.split("://", 1)[-1])[-180:]
         path = self.cache_dir / key
         if immutable and path.exists():
+            return path.read_bytes()
+        if ttl and path.exists() and time.time() - path.stat().st_mtime < ttl:
             return path.read_bytes()
         if immutable and url in self.missing:
             return None
@@ -90,10 +93,12 @@ class Fetcher:
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 data = r.read()
             self.errors.pop(url, None)
-            if immutable:
+            if immutable or ttl:
                 path.write_bytes(data)
             return data
         except urllib.error.HTTPError as e:
+            if ttl and path.exists():
+                return path.read_bytes()  # stale copy beats nothing
             if e.code == 404:
                 if immutable:
                     self.missing.add(url)
@@ -101,6 +106,8 @@ class Fetcher:
                 self.errors[url] = f"HTTP {e.code}"
             return None
         except Exception as e:  # network down, timeout, TLS...
+            if ttl and path.exists():
+                return path.read_bytes()
             self.errors[url] = type(e).__name__ + ": " + str(e)[:120]
             return None
 
@@ -589,7 +596,15 @@ class Engine:
         self.feed: dict = {"house": [], "senate": [], "votes": [], "status": {}}
         self.lock = threading.Lock()
         self.titles: dict[str, str] = {}   # "H.R. 1234" -> title
-        self.rules: dict[str, str] = {}    # "H.Res. 900" -> "H.R. 1234"
+        self.rules: dict[str, str] = {}    # "HRES900" -> "H.R. 1234"
+        self.bills: dict[str, dict] = {}   # "HR1234" -> full bill page data
+        self.live_path = data_dir / "bill_live.json"
+        self.bill_live: dict[str, dict] = {}
+        if self.live_path.exists():
+            try:
+                self.bill_live = json.loads(self.live_path.read_text())
+            except Exception:
+                self.bill_live = {}
 
     # ---- House ------------------------------------------------------------
     def house(self) -> tuple[list[dict], str | None]:
@@ -758,6 +773,134 @@ class Engine:
         items.sort(key=lambda x: x["ts"], reverse=True)
         return items, votes, log_day
 
+
+    # ---- Bills ------------------------------------------------------------
+    def build_bills(self, items: list[dict]) -> dict:
+        today = self.fixed_date or now_et().date()
+        c, _ = congress_session(today)
+        recent_cut = (today - dt.timedelta(days=14)).isoformat()
+        targets: dict[str, set] = {}
+        for it in items:
+            keys = {canon(r) for r in it.get("refs", [])}
+            if (it.get("vote") or {}).get("measure"):
+                keys.add(canon(it["vote"]["measure"]))
+            if it.get("about"):
+                keys.add(canon(it["about"]))
+            keys = {k for k in keys if BILL_CANON.match(k)}
+            it["bill_keys"] = sorted(keys)
+            for k in keys:
+                targets.setdefault(k, set())
+                # Only floor items go into the bill's live timeline (the votes table has the whole session).
+                if it["ts"][:10] >= recent_cut:
+                    slim = {f: it[f] for f in SLIM if f in it}
+                    self.bill_live.setdefault(k, {})[it["id"]] = slim
+        for k in list(self.bill_live):
+            if len(self.bill_live[k]) > 400:
+                keep = sorted(self.bill_live[k].values(), key=lambda x: x["ts"])[-400:]
+                self.bill_live[k] = {x["id"]: x for x in keep}
+        self.live_path.write_text(json.dumps(self.bill_live))
+
+        wanted = set(targets) | set(self.bill_live)
+        infos: dict[str, dict] = {}
+
+        def load(k):
+            m = BILL_CANON.match(k)
+            data = self.f.get(BILLSTATUS_URL.format(c=c, t=m.group(1).lower(), n=m.group(2)), ttl=3 * 3600)
+            if not data:
+                return k, {}
+            try:
+                return k, parse_billstatus(data)
+            except ET.ParseError:
+                return k, {}
+        with cf.ThreadPoolExecutor(8) as ex:
+            for k, info in ex.map(load, sorted(wanted)):
+                infos[k] = info
+        # The fetch errors for bills that aren't in GovInfo yet aren't worth showing.
+        for url in [u for u in self.f.errors if "govinfo.gov" in u]:
+            self.f.errors.pop(url, None)
+
+        # Rules (H.Res.) point at the bill they set up; fold their history into that bill.
+        rule_of: dict[str, str] = {}
+        for k, info in infos.items():
+            tgt = rule_target(info.get("official", "") or info.get("display", ""))
+            if k.startswith("HRES") and tgt:
+                rule_of[k] = canon(tgt)
+        for k, tgt in list(self.rules.items()):
+            rule_of.setdefault(k, canon(tgt))
+
+        names = {}
+        for k in wanted:
+            info = infos.get(k, {})
+            name = info.get("short") or info.get("display") or info.get("official") or ""
+            if not name:
+                live_titles = [x.get("title") for x in self.bill_live.get(k, {}).values() if x.get("title")]
+                name = live_titles[-1] if live_titles else ""
+            names[k] = name
+        for k, tgt in rule_of.items():
+            if k in names:
+                names[k] = f"Rule for {bill_display(tgt)}" + (f" ({names[tgt]})" if names.get(tgt) else "")
+
+        bills = {}
+        for k in wanted:
+            info = infos.get(k, {})
+            live = list(self.bill_live.get(k, {}).values())
+            for rk, tgt in rule_of.items():
+                if tgt == k:
+                    live += list(self.bill_live.get(rk, {}).values())
+            live_keys = set()
+            for x in live:
+                v = x.get("vote") or {}
+                if v.get("roll"):
+                    live_keys.add(("H", v["roll"]))
+                if v.get("num"):
+                    live_keys.add(("S", v["num"]))
+                if x["chamber"] == "house":
+                    live_keys.add(("T", x["ts"][:19]))
+            hist = billstatus_items(k, info)
+            for rk, tgt in rule_of.items():
+                if tgt == k and rk in infos:
+                    hist += [dict(h, about=bill_display(rk) + " (the rule for this bill)")
+                             for h in billstatus_items(rk, infos[rk]) if h["kind"] not in ("stage",)]
+            for h in hist:
+                if h.get("vote_key") in live_keys or ("T", h["ts"][:19]) in live_keys:
+                    continue
+                live.append(h)
+            uniq = {x["id"]: x for x in live}
+            timeline = sorted(uniq.values(), key=lambda x: x["ts"], reverse=True)
+            for x in timeline:
+                x.pop("vote_key", None)
+
+            m = BILL_CANON.match(k)
+            cg = f"https://www.congress.gov/bill/{c}th-congress/{CG_TYPE[m.group(1)]}/{m.group(2)}"
+            links = [{"title": "Congress.gov: status, text, cosponsors", "url": cg, "kind": "Official"},
+                     {"title": "Bill text", "url": cg + "/text", "kind": "Official"},
+                     {"title": "GovTrack: plain-language overview and prognosis",
+                      "url": f"https://www.govtrack.us/congress/bills/{c}/{k.lower()}", "kind": "Analysis"}]
+            links += [dict(x) for x in info.get("cbo", [])]
+            links += [r for r in (report_link(x) for x in info.get("reports", [])) if r]
+            if k.startswith("HRES") and k in rule_of:
+                links.append({"title": f"This is the rule for {bill_display(rule_of[k])}", "url": f"#bill-{rule_of[k].lower()}",
+                              "kind": "Related"})
+
+            news = []
+            active = any(x["ts"][:10] >= recent_cut for x in timeline)
+            if active and not k.startswith("HRES"):
+                q = f'"{bill_display(k)}"'
+                if names[k] and len(names[k]) < 90 and not names[k].lower().startswith(("to ", "a bill", "providing")):
+                    q += f' OR "{names[k]}"'
+                rss = self.f.get(NEWS_URL.format(q=urllib.parse.quote(q + " when:30d")), ttl=2 * 3600)
+                news = parse_news(rss) if rss else []
+                self.f.errors.pop(NEWS_URL.format(q=urllib.parse.quote(q + " when:30d")), None)
+
+            bills[k] = {"key": k, "ref": bill_display(k), "name": names[k], "congress": c,
+                        "official": info.get("official", ""), "sponsor": info.get("sponsor", ""),
+                        "policy": info.get("policy", ""), "introduced": info.get("introduced", ""),
+                        "summary": info.get("summary", "")[:1500], "links": links, "news": news,
+                        "rule_for": bill_display(rule_of[k]) if k in rule_of else "",
+                        "timeline": timeline, "history_loaded": bool(info)}
+        self.bills = bills
+        return {k: {"ref": b["ref"], "name": b["name"]} for k, b in bills.items()}
+
     # ---- Assemble ---------------------------------------------------------
     def now_line(self, items: list[dict]) -> dict:
         out = self._now(items)
@@ -779,7 +922,7 @@ class Engine:
         for it in items[:15]:
             if it["kind"] in ("debate", "final", "procedural", "amendment"):
                 return {"text": it["text"], "kind": it["kind"], "label": it["label"], "explain": it["explain"],
-                        "about": it.get("about", ""), "ts": it["ts"]}
+                        "about": it.get("about", ""), "ts": it["ts"], "bill_keys": it.get("bill_keys", [])}
         return {"text": latest["text"], "kind": latest["kind"]}
 
     def refresh(self):
@@ -814,6 +957,13 @@ class Engine:
 
         house_votes = [dict(i, is_roll=True) for i in house if i.get("vote") and i["vote"].get("roll")]
         votes = sorted(house_votes + s_votes, key=lambda x: x["ts"], reverse=True)
+        try:
+            bill_index = self.build_bills(house + senate + votes)
+        except Exception:
+            traceback.print_exc()
+            bill_index = {}
+        for it in votes:
+            it.setdefault("bill_keys", sorted({canon(r) for r in it.get("refs", []) if BILL_CANON.match(canon(r))}))
         h_feed = [i for i in house if i["ts"][:10] == h_day] if h_day else []
         s_feed = senate
         status = {
@@ -824,7 +974,7 @@ class Engine:
             "now": {"house": self.now_line(h_feed), "senate": self.now_line(s_feed)},
         }
         with self.lock:
-            self.feed = {"house": h_feed, "senate": s_feed, "votes": votes, "status": status}
+            self.feed = {"house": h_feed, "senate": s_feed, "votes": votes, "bills": bill_index, "status": status}
 
     def apply_ai(self):
         with self.lock:
@@ -836,6 +986,151 @@ class Engine:
         while True:
             self.refresh()
             time.sleep(every)
+
+
+
+# --------------------------------------------------------------------------
+# Bills: names, history (GovInfo BILLSTATUS), links, news
+# --------------------------------------------------------------------------
+BILLSTATUS_URL = "https://www.govinfo.gov/bulkdata/BILLSTATUS/{c}/{t}/BILLSTATUS-{c}{t}{n}.xml"
+NEWS_URL = "https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:en"
+BILL_CANON = re.compile(r"^(HR|S|HRES|SRES|HJRES|SJRES|HCONRES|SCONRES)(\d+)$")
+CG_TYPE = {"HR": "house-bill", "S": "senate-bill", "HRES": "house-resolution", "SRES": "senate-resolution",
+           "HJRES": "house-joint-resolution", "SJRES": "senate-joint-resolution",
+           "HCONRES": "house-concurrent-resolution", "SCONRES": "senate-concurrent-resolution"}
+DISPLAY = {"HR": "H.R.", "S": "S.", "HRES": "H.Res.", "SRES": "S.Res.", "HJRES": "H.J.Res.",
+           "SJRES": "S.J.Res.", "HCONRES": "H.Con.Res.", "SCONRES": "S.Con.Res."}
+STAGE = {"IntroReferral": ("INTRODUCED", "Introduced / sent to committee"),
+         "Committee": ("COMMITTEE", "Committee action"),
+         "Calendars": ("CALENDAR", "Placed on the calendar"),
+         "President": ("PRESIDENT", "President"),
+         "BecameLaw": ("LAW", "Became law")}
+SLIM = ("id", "chamber", "ts", "approx", "text", "kind", "badge", "label", "explain", "ai", "vote", "title",
+        "refs", "about", "pending", "is_roll", "dateonly", "source")
+
+
+def bill_display(canon_ref: str) -> str:
+    m = BILL_CANON.match(canon_ref)
+    return f"{DISPLAY[m.group(1)]} {m.group(2)}" if m else canon_ref
+
+
+def strip_html(h: str) -> str:
+    return norm(re.sub(r"<[^>]+>", " ", h or ""))
+
+
+def parse_billstatus(xml_bytes: bytes) -> dict:
+    root = ET.fromstring(xml_bytes)
+    b = root.find("bill")
+    if b is None:
+        return {}
+    g = lambda path: norm(b.findtext(path) or "")
+    titles = []
+    for it in b.findall("titles/item"):
+        titles.append((norm(it.findtext("titleType") or ""), norm(it.findtext("title") or "")))
+    short = ""
+    for pref in ("Short Title(s) as Enacted", "Short Title(s) as Passed", "Short Title(s) as Reported",
+                 "Short Title(s) as Introduced", "Short Title"):
+        short = next((t for tt, t in titles if tt.startswith(pref) and t), "")
+        if short:
+            break
+    display = next((t for tt, t in titles if tt == "Display Title" and t), "")
+    official = g("title") or next((t for tt, t in titles if tt.startswith("Official Title") and t), "")
+    sp = b.find("sponsors/item")
+    sponsor = norm(sp.findtext("fullName") or "") if sp is not None else ""
+    sums = b.findall("summaries/summary") or b.findall("summaries/item")
+    summary = ""
+    if sums:
+        latest = max(sums, key=lambda x: x.findtext("actionDate") or "")
+        summary = strip_html(latest.findtext("text") or "")
+    actions = []
+    for it in b.findall("actions/item"):
+        src = it.find("sourceSystem")
+        rv = []
+        for v in it.findall("recordedVotes/recordedVote"):
+            rv.append({"roll": int(v.findtext("rollNumber") or 0), "url": norm(v.findtext("url") or ""),
+                       "chamber": norm(v.findtext("chamber") or "")})
+        actions.append({"date": norm(it.findtext("actionDate") or ""), "time": norm(it.findtext("actionTime") or ""),
+                        "text": norm(it.findtext("text") or ""), "type": norm(it.findtext("type") or ""),
+                        "code": norm(it.findtext("actionCode") or ""),
+                        "src_code": norm(src.findtext("code") or "") if src is not None else "",
+                        "src": norm(src.findtext("name") or "") if src is not None else "", "votes": rv})
+    cbo = [{"title": norm(c.findtext("title") or "CBO cost estimate"), "url": norm(c.findtext("url") or ""),
+            "date": norm(c.findtext("pubDate") or "")[:10], "kind": "CBO cost estimate"}
+           for c in b.findall("cboCostEstimates/item") if c.findtext("url")]
+    reports = [norm(r.findtext("citation") or "") for r in b.findall("committeeReports/item")]
+    return {"congress": g("congress"), "type": (g("type") or g("billType")).upper(), "number": g("number"),
+            "short": short, "display": display, "official": official, "sponsor": sponsor,
+            "policy": norm(b.findtext("policyArea/name") or ""), "introduced": g("introducedDate"),
+            "summary": summary, "actions": actions, "cbo": cbo, "reports": [r for r in reports if r]}
+
+
+def report_link(citation: str) -> dict | None:
+    m = re.match(r"([HS])\. ?Rept\. ?(\d+)-(\d+)", citation)
+    if not m:
+        return None
+    kind = "house-report" if m.group(1) == "H" else "senate-report"
+    return {"title": f"Committee report: {citation}", "kind": "Committee report",
+            "url": f"https://www.congress.gov/congressional-report/{m.group(2)}th-congress/{kind}/{m.group(3)}"}
+
+
+def parse_news(rss: bytes, limit: int = 8) -> list[dict]:
+    out = []
+    try:
+        root = ET.fromstring(rss)
+    except ET.ParseError:
+        return out
+    for it in root.iter("item"):
+        title = norm(it.findtext("title") or "")
+        source = norm(it.findtext("source") or "")
+        if source and title.endswith(" - " + source):
+            title = title[: -len(source) - 3]
+        date = ""
+        try:
+            date = dt.datetime.strptime(norm(it.findtext("pubDate") or ""), "%a, %d %b %Y %H:%M:%S %Z").date().isoformat()
+        except ValueError:
+            pass
+        out.append({"title": title, "url": norm(it.findtext("link") or ""), "source": source, "date": date})
+        if len(out) >= limit:
+            break
+    return out
+
+
+def billstatus_items(canon_ref: str, info: dict, about: str = "") -> list[dict]:
+    acts = info.get("actions", [])
+    nonloc_floor_days = {a["date"] for a in acts if a["type"] in ("Floor", "ResolvingDifferences", "Veto")
+                         and a["src_code"] != "9" and a["src"] != "Library of Congress"}
+    seen, out = set(), []
+    for i, a in enumerate(acts):
+        loc = a["src_code"] == "9" or a["src"] == "Library of Congress"
+        if loc and a["type"] in ("Floor", "ResolvingDifferences", "Veto") and a["date"] in nonloc_floor_days:
+            continue
+        key = (a["date"], a["text"][:80].lower())
+        if key in seen or not a["date"]:
+            continue
+        seen.add(key)
+        chamber = "house" if "House" in a["src"] or a["code"].startswith("H") else \
+            "senate" if "Senate" in a["src"] else "congress"
+        ts = f"{a['date']}T{a['time'] or '12:00:00'}-05:00"
+        it = {"id": f"bs-{canon_ref}-{i}", "chamber": chamber, "ts": ts, "dateonly": not a["time"],
+              "text": a["text"], "refs": [], "source": "Congress.gov"}
+        if a["type"] in STAGE:
+            badge, label = STAGE[a["type"]]
+            kind = "final" if a["type"] == "BecameLaw" or "became public law" in a["text"].lower() else "stage"
+            it.update({"kind": kind, "badge": "LAW" if kind == "final" else badge, "label": label, "explain": ""})
+        else:
+            it.update(classify("house" if chamber == "house" else "senate", a["text"]))
+        out_v = vote_outcome(a["text"])
+        if a["votes"]:
+            v0 = a["votes"][0]
+            out_v = out_v or {}
+            out_v.update({"url": v0["url"], ("roll" if v0["chamber"] == "House" else "num"): v0["roll"]})
+            it["vote_key"] = ("H" if v0["chamber"] == "House" else "S", v0["roll"])
+        it["vote"] = out_v
+        if about:
+            it["about"] = about
+        mark_pending(it)
+        out.append(it)
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -855,7 +1150,11 @@ def make_handler(engine: Engine, page: bytes):
             self.wfile.write(body)
 
         def do_GET(self):
-            if self.path.startswith("/api/feed"):
+            if self.path.startswith("/api/bill/"):
+                key = self.path.rsplit("/", 1)[-1].split("?")[0].upper()
+                b = engine.bills.get(key)
+                self._send(200 if b else 404, json.dumps(b or {}).encode(), "application/json")
+            elif self.path.startswith("/api/feed"):
                 with engine.lock:
                     body = json.dumps(engine.feed).encode()
                 self._send(200, body, "application/json")
@@ -887,6 +1186,13 @@ def main(argv=None):
         out = Path(args.out)
         out.mkdir(parents=True, exist_ok=True)
         (out / "feed.json").write_text(json.dumps(engine.feed))
+        bdir = out / "bills"
+        bdir.mkdir(exist_ok=True)
+        for old in bdir.glob("*.json"):
+            if old.stem.upper() not in engine.bills:
+                old.unlink()
+        for k, b in engine.bills.items():
+            (bdir / f"{k.lower()}.json").write_text(json.dumps(b))
         st = engine.feed["status"]
         print(f"house={st['house_day']} senate={st['senate_day']} items={len(engine.feed['house'])}+"
               f"{len(engine.feed['senate'])} votes={len(engine.feed['votes'])} errors={st['errors']}")
