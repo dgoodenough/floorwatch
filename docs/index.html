@@ -64,8 +64,6 @@ main{padding:14px 16px 60px;max-width:1400px;margin:0 auto}
 .ch{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--house)} .ch.senate{color:var(--senate)}
 .label{font-weight:650}
 .explain{margin-top:4px}
-.ai{margin-top:5px;font-size:14px;padding:6px 9px;border-radius:7px;background:var(--routine-bg)}
-.ai::before{content:"In plain English: ";font-weight:650}
 .official{margin-top:5px;color:var(--muted);font-size:13px}
 .measure{font-size:13px;margin-top:4px}
 .measure b{font-weight:650}
@@ -306,7 +304,6 @@ function itemHtml(it, showCh){
       <span class="label">${esc(it.label)}</span>
     </div>
     ${it.explain ? `<div class="explain">${esc(it.explain)}</div>`:""}
-    ${it.ai ? `<div class="ai">${esc(it.ai)}</div>`:""}
     ${measure}
     <div class="official">${esc(it.text)}</div>
     ${voteHtml(it)}
@@ -315,7 +312,7 @@ function itemHtml(it, showCh){
 function keep(it){
   if(S.hideRoutine && (it.kind==="routine")) return false;
   if(S.votesOnly && !(it.vote && (it.vote.yeas||it.vote.nays||it.vote.voice||it.is_roll))) return false;
-  if(S.q){ const hay = [it.text,it.title,it.label,it.about,(it.refs||[]).join(" "),it.ai].join(" ").toLowerCase();
+  if(S.q){ const hay = [it.text,it.title,it.label,it.about,(it.refs||[]).join(" ")].join(" ").toLowerCase();
     if(!S.q.toLowerCase().split(/\s+/).every(w=>hay.includes(w))) return false; }
   return true;
 }
@@ -378,7 +375,7 @@ function evHtml(it, inStory){
   return `<div class="ev t${t} ${it.kind}${fail?" fail":""}${S.open.has(it.id)?" open":""}" onclick="toggleRow(this,'${esc(it.id)}')">
     <div class="ev-t">${it.approx&&!it.is_roll?"~":""}${fmtTime(it.ts)}</div><div class="ev-r"><span class="ev-d"></span></div>
     <div class="ev-c"><div class="hl">${it.hlOverride || headline(it)}${t<=2?tagFor(it):""}</div>${t<=2?tallyLine(v):""}${why}
-      ${it.ai?`<div class="ai">${esc(it.ai)}</div>`:""}${chipLine}
+      ${chipLine}
       <div class="det">${(it.texts||[it.text]).map(esc).join("<br>")}${t>2&&v?tallyLine(v):""}</div></div></div>`;
 }
 function gapHtml(h){
@@ -487,7 +484,7 @@ function renderTable(){
       <td><span class="badge b-${it.kind}">${esc(it.badge)}</span></td>
       <td>${esc(it.label)}</td>
       <td style="min-width:150px">${(it.bill_keys||[]).length ? chips(it.bill_keys) : esc(cell(it,"measure"))}</td>
-      <td>${esc(cell(it,"title"))}${v.question&&v.title?`<div class="link">${esc(v.question)}</div>`:""}${it.ai?`<div class="link">${esc(it.ai)}</div>`:""}</td>
+      <td>${esc(cell(it,"title"))}${v.question&&v.title?`<div class="link">${esc(v.question)}</div>`:""}</td>
       <td class="res ${passed(v.result)?"pass":"fail"}">${esc(v.result||"")}${v.url?` <a class="link" href="${esc(v.url)}" target="_blank" rel="noopener">↗</a>`:""}</td>
       <td class="num">${v.yeas??""}</td><td class="num">${v.nays??""}</td>
       <td class="num">${pc("R")}</td><td class="num">${pc("D")}</td>
@@ -587,7 +584,7 @@ function renderBill(){
       <div><div class="tl-line"><span class="tl-ch ${it.chamber}">${it.chamber==="congress"?"":it.chamber==="house"?"HOUSE":"SENATE"}</span>
           <span class="badge b-${it.kind}">${esc(it.badge)}</span><span class="lbl">${esc(it.label)}</span>
           <span class="txt">${esc(brief || (it.vote&&it.vote.title) || it.text)}</span>${tallyHtml(it.vote)}</div>
-        <div class="tl-detail">${it.explain?`<div class="explain">${esc(it.explain)}</div>`:""}${it.ai?`<div class="ai">${esc(it.ai)}</div>`:""}
+        <div class="tl-detail">${it.explain?`<div class="explain">${esc(it.explain)}</div>`:""}
           ${it.about?`<div class="measure">${esc(it.about)}</div>`:""}
           <div class="official">${esc(it.text)}</div>${voteHtml(it)}</div></div></div>`;
     prev = t; prevDay = day;
@@ -613,10 +610,9 @@ function renderStatus(){
   $("#dot").classList.toggle("stale", !fresh);
   $("#updated").textContent = (fresh?"Live · ":"Stale · ") + "updated " + fmtTime(st.updated);
   const errs = (st.errors||[]).map(([u,e])=>`<span class="err">Couldn't reach ${esc(new URL(u).host)} (${esc(e)})</span>`);
-  if(st.ai_error) errs.push(`<span class="err">AI: ${esc(st.ai_error)}</span>`);
   $("#status").innerHTML = errs.join(" · ");
   $("#foot").innerHTML = `Sources: House Clerk, Senate Periodical Press Gallery, senate.gov roll calls, GovInfo. Updated every minute or two on weekdays.
-    ${st.ai==="off" ? "AI explanations are off (add an ANTHROPIC_API_KEY repository secret to turn them on)." : "AI explanations by Claude."}`;
+    Explanations are written by FloorWatch's own rules: no AI, no API keys, free.`;
 }
 function render(){
   if(!S.data) return;

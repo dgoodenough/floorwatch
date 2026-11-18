@@ -35,8 +35,6 @@ jobs:
           fi
 
       - name: Refresh and publish (4 times, a minute apart)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           git config user.name "floorwatch-bot"
           git config user.email "floorwatch-bot@users.noreply.github.com"

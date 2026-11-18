@@ -9,9 +9,7 @@ ROUTINE, explains it in one line, and serves an auto-refreshing page.
 
     python3 floorwatch.py            # then open http://localhost:8765
 
-Standard library only. Optional: set ANTHROPIC_API_KEY to add a short
-AI-written "in plain English" line under each significant item.
-"""
+Standard library only. """
 from __future__ import annotations
 
 import argparse
@@ -512,103 +510,10 @@ def parse_senate_vote(xml_bytes: bytes) -> dict:
 
 
 # --------------------------------------------------------------------------
-# Optional AI line (Anthropic API, stdlib HTTP)
-# --------------------------------------------------------------------------
-class Explainer:
-    def __init__(self, cache_path: Path, background: bool = True):
-        self.key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-        self.model = os.environ.get("FLOORWATCH_MODEL", "claude-haiku-5-5")
-        self.path = cache_path
-        self.cache: dict[str, str] = {}
-        if cache_path.exists():
-            try:
-                self.cache = json.loads(cache_path.read_text())
-            except Exception:
-                self.cache = {}
-        self.lock = threading.Lock()
-        self.queue: list[tuple[str, str]] = []
-        self.enabled = bool(self.key)
-        self.last_error = ""
-        if self.enabled and background:
-            threading.Thread(target=self._worker, daemon=True).start()
-
-    def get(self, item_id: str) -> str:
-        return self.cache.get(item_id, "")
-
-    def request(self, item_id: str, prompt: str):
-        if not self.enabled or item_id in self.cache:
-            return
-        with self.lock:
-            if all(i != item_id for i, _ in self.queue):
-                self.queue.append((item_id, prompt))
-
-    def drain(self, max_items: int = 25, deadline: float = 120):
-        """Used by --once: explain up to max_items queued items, then stop."""
-        end = time.time() + deadline
-        fails = 0
-        for _ in range(max_items):
-            if fails >= 3:
-                return  # don't burn the run retrying a broken key/model
-            with self.lock:
-                job = self.queue.pop(0) if self.queue else None
-            if not job or time.time() > end:
-                return
-            ok = self._call(*job)
-            fails = 0 if ok else fails + 1
-
-    def _worker(self):
-        while True:
-            with self.lock:
-                job = self.queue.pop(0) if self.queue else None
-            if not job:
-                time.sleep(1)
-                continue
-            self._call(*job)
-
-    def _call(self, item_id: str, prompt: str):
-            try:
-                body = json.dumps({"model": self.model, "max_tokens": 160,
-                                   "messages": [{"role": "user", "content": prompt}]}).encode()
-                req = urllib.request.Request(
-                    "https://api.anthropic.com/v1/messages", data=body, method="POST",
-                    headers={"x-api-key": self.key, "anthropic-version": "2023-06-01",
-                             "content-type": "application/json"})
-                with urllib.request.urlopen(req, timeout=30) as r:
-                    resp = json.loads(r.read())
-                text = norm("".join(b.get("text", "") for b in resp.get("content", [])))
-                with self.lock:
-                    self.cache[item_id] = text
-                    self.path.write_text(json.dumps(self.cache))
-                self.last_error = ""
-                return True
-            except urllib.error.HTTPError as e:
-                try:
-                    detail = json.loads(e.read()).get("error", {}).get("message", "")
-                except Exception:
-                    detail = ""
-                self.last_error = f"HTTP {e.code}: {detail[:160]}"
-            except Exception as e:
-                self.last_error = f"{type(e).__name__}: {str(e)[:120]}"
-            time.sleep(1)
-            return False
-
-
-AI_PROMPT = """You explain U.S. congressional floor activity to a smart viewer watching a livestream.
-Chamber: {chamber}
-Official text: {text}
-{context}Our rule-based label: {label} - {explain}
-
-In ONE sentence of at most 30 words, say in plain English what is actually being decided or done
-right now and what it means for the underlying bill or nominee (e.g. what a "yes" does).
-Be strictly neutral: no opinions on the policy or parties. If unsure what the measure is, say so
-briefly rather than guess. Output only the sentence."""
-
-
-# --------------------------------------------------------------------------
 # The engine: refresh everything, build the feed
 # --------------------------------------------------------------------------
 class Engine:
-    def __init__(self, data_dir: Path, days_back: int, fixed_date: dt.date | None, background_ai: bool = True):
+    def __init__(self, data_dir: Path, days_back: int, fixed_date: dt.date | None):
         data_dir.mkdir(parents=True, exist_ok=True)
         self.f = Fetcher(data_dir / "cache")
         self.state_path = data_dir / "state.json"
@@ -618,7 +523,6 @@ class Engine:
                 self.state = json.loads(self.state_path.read_text())
             except Exception:
                 pass
-        self.ai = Explainer(data_dir / "ai_cache.json", background_ai)
         self.days_back = days_back
         self.fixed_date = fixed_date
         self.feed: dict = {"house": [], "senate": [], "votes": [], "status": {}}
@@ -1032,14 +936,6 @@ class Engine:
                 if t:
                     it["title"] = t
                     break
-            if it["kind"] in ("final", "procedural", "amendment", "debate"):
-                ctx = f"Measure title: {it['title']}\n" if it["title"] else ""
-                if it.get("about"):
-                    ctx += f"This is a procedural step about: {it['about']}\n"
-                self.ai.request(it["id"], AI_PROMPT.format(chamber=it["chamber"].title(), text=it["text"],
-                                                          context=ctx, label=it["label"],
-                                                          explain=it["explain"]))
-            it["ai"] = self.ai.get(it["id"])
 
         house_votes = [dict(i, is_roll=True) for i in house if i.get("vote") and i["vote"].get("roll")]
         votes = sorted(house_votes + s_votes, key=lambda x: x["ts"], reverse=True)
@@ -1056,17 +952,10 @@ class Engine:
             "updated": now_et().isoformat(), "took": round(time.time() - started, 1),
             "house_day": h_day, "senate_day": s_day,
             "errors": list(self.f.errors.items())[:6],
-            "ai": "on" if self.ai.enabled else "off", "ai_error": self.ai.last_error,
             "now": {"house": self.now_line(h_feed), "senate": self.now_line(s_feed)},
         }
         with self.lock:
             self.feed = {"house": h_feed, "senate": s_feed, "votes": votes, "bills": bill_index, "status": status}
-
-    def apply_ai(self):
-        with self.lock:
-            for key in ("house", "senate", "votes"):
-                for it in self.feed.get(key, []):
-                    it["ai"] = self.ai.get(it["id"]) or it.get("ai", "")
 
     def loop(self, every: int):
         while True:
@@ -1091,7 +980,7 @@ STAGE = {"IntroReferral": ("INTRODUCED", "Introduced / sent to committee"),
          "Calendars": ("CALENDAR", "Placed on the calendar"),
          "President": ("PRESIDENT", "President"),
          "BecameLaw": ("LAW", "Became law")}
-SLIM = ("id", "chamber", "ts", "approx", "text", "kind", "badge", "label", "explain", "ai", "vote", "title",
+SLIM = ("id", "chamber", "ts", "approx", "text", "kind", "badge", "label", "explain", "vote", "title",
         "refs", "about", "pending", "is_roll", "dateonly", "source")
 
 
@@ -1281,14 +1170,9 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     fixed = dt.date.fromisoformat(args.date) if args.date else None
-    engine = Engine(Path(args.data), args.days, fixed, background_ai=not args.once)
+    engine = Engine(Path(args.data), args.days, fixed)
     if args.once:
         engine.refresh()
-        engine.ai.drain()
-        engine.apply_ai()
-        engine.feed["status"]["ai_error"] = engine.ai.last_error
-        if engine.ai.last_error:
-            print("AI error:", engine.ai.last_error)
         out = Path(args.out)
         out.mkdir(parents=True, exist_ok=True)
         (out / "feed.json").write_text(json.dumps(engine.feed))
@@ -1311,7 +1195,7 @@ def main(argv=None):
     threading.Thread(target=engine.loop, args=(args.every,), daemon=True).start()
     srv = ThreadingHTTPServer((args.host, args.port), make_handler(engine, page))
     st = engine.feed["status"]
-    print(f"  House day: {st['house_day']}   Senate day: {st['senate_day']}   AI: {st['ai']}")
+    print(f"  House day: {st['house_day']}   Senate day: {st['senate_day']}")
     for url, err in st["errors"]:
         print(f"  ! {err}  {url}")
     print(f"Open http://localhost:{args.port}   (Ctrl+C to stop)")

@@ -19,7 +19,6 @@ The site is at **https://dgoodenough.github.io/floorwatch/**.
 
 - `.github/workflows/update-feed.yml` runs every 5 minutes. Each run refreshes 4 times, a minute apart, and publishes `feed.json` to the `data` branch. GitHub sometimes delays scheduled runs, so the page is usually 1–5 minutes behind the floor.
 - `.github/workflows/pages.yml` deploys `docs/index.html` to GitHub Pages. The page reads the newest `feed.json` from the `data` branch every 90 seconds.
-- To turn on the AI lines, add an `ANTHROPIC_API_KEY` repository secret (Settings → Secrets and variables → Actions).
 
 ## Run it locally instead
 
@@ -38,17 +37,6 @@ Options:
 | `--every 60` | seconds between checks of the official feeds |
 | `--days 3` | how many recent House legislative days to load into the votes table |
 | `--date 2026-11-17` | replays a past day |
-
-## Optional: AI "In plain English" lines
-
-When running locally:
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-python3 floorwatch.py
-```
-
-With a key set, each significant item also gets a neutral one-sentence explanation from Claude Haiku. Explanations are cached in `floorwatch_data/ai_cache.json`, so each item is only explained once. To use a different model, set `FLOORWATCH_MODEL`.
 
 ## Where the data comes from (all official, no keys needed)
 
