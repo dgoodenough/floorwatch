@@ -140,6 +140,69 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .kind{font-size:10.5px;font-weight:700;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin-right:6px}
 .summary{font-size:14px;margin-top:10px}
 .dayhead{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);margin:16px 0 6px;text-transform:uppercase}
+
+/* ---- live feed: typographic timeline ---- */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:4px 0 18px}
+.hero-c{border-top:3px solid var(--house);padding-top:10px}
+.hero-c.senate{border-top-color:var(--senate)}
+.hero-k{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--muted);display:flex;gap:8px;align-items:center}
+.hero-k .st{font-weight:600;letter-spacing:.02em;text-transform:none}
+.sdot{width:8px;height:8px;border-radius:50%;background:#2fbf71;display:inline-block}
+.sdot.off{background:var(--muted)}
+.hero-s{font-size:23px;line-height:1.25;font-weight:750;margin:6px 0 4px;letter-spacing:-.015em}
+.hero-w{color:var(--muted);font-size:14.5px;margin-top:2px}
+.hero-n{font-size:14px;margin-top:8px;color:var(--ink)} .hero-n b{color:var(--sched);font-size:11px;letter-spacing:.08em;margin-right:6px}
+.fcol h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 6px;color:var(--muted);display:flex;gap:8px;align-items:baseline}
+.fcol h2 b{color:var(--ink)}
+.ev{display:grid;grid-template-columns:68px 20px minmax(0,1fr);cursor:pointer}
+.ev-t{font-size:11.5px;color:var(--muted);text-align:right;padding-right:8px;font-variant-numeric:tabular-nums;line-height:1.2;white-space:nowrap}
+.ev-r{position:relative;align-self:stretch}
+.ev-r::before{content:"";position:absolute;left:9px;top:0;bottom:0;border-left:2px solid var(--line)}
+.ev-d{position:absolute;left:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2.5px solid var(--routine)}
+.ev-c{padding:0 4px 0 6px;min-width:0}
+.gap{display:grid;grid-template-columns:68px 20px 1fr}
+.gap .ev-r::before{border-left-style:solid}
+.gap .gh{font-size:10px;color:var(--muted);text-align:right;padding-right:8px;align-self:center;opacity:.75}
+/* tiers */
+.t1 .ev-t{padding-top:5px} .t1 .ev-d{top:7px;width:14px;height:14px;left:3px}
+.t1 .hl{font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:1.25}
+.t2 .ev-t{padding-top:3px} .t2 .ev-d{top:5px}
+.t2 .hl{font-size:15.5px;font-weight:650}
+.t3 .ev-t{padding-top:2px} .t3 .ev-d{top:4px;width:10px;height:10px;left:5px}
+.t3 .hl{font-size:14.5px;font-weight:500}
+.t4 .ev-t{padding-top:2px} .t4 .ev-d{top:4px;width:10px;height:10px;left:5px;border-style:dotted}
+.t4 .hl{font-size:13.5px;font-style:italic;color:var(--sched)}
+.t5 .ev-t{padding-top:1px;opacity:.7} .t5 .ev-d{top:4px;width:6px;height:6px;left:7px;border-width:0;background:var(--line)}
+.t5 .hl{font-size:12.5px;color:var(--muted)}
+.ev.final .ev-d{border-color:var(--final);background:var(--final)}
+.ev.final.fail .ev-d{border-color:var(--R);background:var(--R)}
+.ev.procedural .ev-d{border-color:var(--proc)} .ev.amendment .ev-d{border-color:var(--amend)}
+.ev.debate .ev-d{border-color:var(--debate)} .ev.schedule .ev-d{border-color:var(--sched)}
+.hl .ok{color:var(--final)} .hl .no{color:var(--R)}
+.hl .tag{font-size:10px;font-weight:800;letter-spacing:.07em;padding:1px 6px;border-radius:4px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.tally2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;margin-top:3px;font-variant-numeric:tabular-nums}
+.tally2 .bar{width:120px}
+.why{font-size:13px;color:var(--muted);margin-top:2px;line-height:1.4}
+.t1 .why{font-size:13.5px}
+.det{display:none;font-size:12.5px;color:var(--muted);margin-top:4px;border-left:2px solid var(--line);padding-left:8px}
+.ev.open .det{display:block}
+.ev-c{padding-bottom:6px}
+.story-h{display:grid;grid-template-columns:68px 20px minmax(0,1fr);margin-top:6px}
+.story-h .ev-r::before{top:0}
+.story-h a{text-decoration:none;display:block;padding:2px 6px 4px;min-width:0}
+.story-h .nm{font-size:16px;font-weight:750;letter-spacing:-.01em;line-height:1.25}
+.story-h .rf{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.03em;margin-left:6px;white-space:nowrap}
+.story-h a:hover .nm{text-decoration:underline}
+.story-b{margin-left:0}
+.story-b .ev-c{padding-left:18px}
+.story-b .ev-c::before{content:""}
+.expect{margin:2px 0 14px 88px;font-size:13.5px}
+.expect h4{margin:0 0 4px;font-size:11px;letter-spacing:.09em;color:var(--sched);text-transform:uppercase}
+.expect li{margin:2px 0;color:var(--ink)} .expect li.done{color:var(--muted);text-decoration:line-through}
+.expect ul{margin:0;padding-left:18px}
+.foot{font-size:12px;color:var(--muted);margin-top:30px;border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:900px){.hero{grid-template-columns:1fr;gap:16px}.hero-s{font-size:20px}.expect{margin-left:0}
+  .ev,.gap,.story-h{grid-template-columns:60px 18px minmax(0,1fr)}.ev-t{font-size:10.5px;padding-right:5px}}
 @media (max-width:900px){.cols,.now,.bv-grid,.bv-layout{grid-template-columns:1fr}.hide-sm{display:none}
   .bv-side{position:static;max-height:none;order:-1} .tl-line .badge,.tl-ch{display:none}.tl-row,.tl-gap{grid-template-columns:58px 22px minmax(0,1fr)}}
 </style>
@@ -193,6 +256,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   <section id="feedView"></section>
   <section id="tableView" style="display:none"></section>
   <section id="billView"></section>
+  <div class="foot" id="foot"></div>
 </main>
 <script>
 const S = {open:new Set(), newestFirst:false, view:"feed", ch:"both", hideRoutine:true, votesOnly:false, q:"", sort:{key:"ts",asc:false}, data:null, lastOk:0};
@@ -251,29 +315,148 @@ function keep(it){
     if(!S.q.toLowerCase().split(/\s+/).every(w=>hay.includes(w))) return false; }
   return true;
 }
+const billOf = it => { if(it.about){ const k = it.about.replace(/[^A-Za-z0-9]/g,"").toUpperCase(); if(/^(HR|S|HRES|SRES|HJRES|SJRES|HCONRES|SCONRES)\d+$/.test(k)) return k; }
+  return (it.bill_keys||[]).find(k=>!k.startsWith("HRES")) || (it.bill_keys||[])[0] || null; };
+const bname = k => { const b = k && (S.data.bills||{})[k]; return b ? (b.name || b.ref) : ""; };
+function headline(it){
+  const v = it.vote, r = v && v.result, ok = passed(r), L = it.label || "";
+  const has = v && (v.yeas || v.nays || r);
+  const R = (y, n) => ok ? `<span class="ok">${y}</span>` : `<span class="no">${n}</span>`;
+  if(has){
+    const map = {
+      "Passage": R("Passed","Failed"), "Passage (fast-track)": R("Passed","Failed"),
+      "Confirmation": R("Confirmed","Rejected"), "Veto override": R("Veto overridden","Veto sustained"),
+      "Accept the Senate's version": R("Agreed to the Senate's version","Rejected the Senate's version"),
+      "Accept the House's version": R("Agreed to the House's version","Rejected the House's version"),
+      "Conference report": R("Final compromise approved","Final compromise rejected"),
+      "Adopting the rule": R("Rule adopted","Rule defeated"),
+      "Previous question on the rule": R("Debate on the rule ended","Previous question failed"),
+      "Motion to recommit": R("Sent back to committee","Minority's motion to recommit failed"),
+      "Cloture on the bill": R("Filibuster broken: debate on the bill will end","Filibuster holds"),
+      "Cloture on starting debate": R("Senate agrees to start debate","Filibuster blocks starting debate"),
+      "Cloture on a nominee": R("Debate on the nominee cut off","Cloture on nominee failed"),
+      "Cloture on an amendment": R("Debate on the amendment cut off","Cloture on amendment failed"),
+      "Waive budget rules": R("Budget rules waived","Budget waiver failed"),
+      "Motion to table": R("Tabled (killed)","Motion to table failed"),
+      "Amendment": R("Amendment adopted","Amendment rejected"),
+      "Motion to proceed": R("Senate takes it up","Motion to proceed failed"),
+      "Housekeeping": "Result locked in",
+    };
+    return map[L] || `${esc(L)}: ${R(esc(r||""), esc(r||""))}`;
+  }
+  if(it.pending) return `Motion offered: ${esc(L.toLowerCase())}`;
+  const map2 = {"Debate":"Debate under way","Now considering":"Taken up on the floor","The rule":"The rule for this bill is up first",
+    "Vote postponed":"Vote requested, postponed until later","On the floor":"On the floor","Cloture filed":"Cloture filed: test vote set up"};
+  if(it.kind==="schedule" || it.kind==="routine" || it.kind==="info") return esc(map2[L] && it.kind!=="schedule" ? map2[L] : it.text);
+  return esc(map2[L] || L);
+}
+const tierOf = it => { const v = it.vote, has = v && (v.yeas||v.nays||v.result);
+  if(it.kind==="final" && has) return 1;
+  if((it.kind==="procedural"||it.kind==="amendment"||it.kind==="final") && has) return it.label==="Housekeeping" ? 5 : 2;
+  if(it.kind==="schedule") return 4;
+  if(it.kind==="routine"||it.kind==="info") return 5;
+  return 3; };
+const tagFor = it => it.kind==="procedural" ? `<span class="tag b-procedural">PROCEDURAL</span>`
+  : it.kind==="amendment" ? `<span class="tag b-amendment">AMENDMENT</span>` : (it.kind==="final" && tierOf(it)===1 ? `<span class="tag b-final">THE REAL VOTE</span>` : "");
+function tallyLine(v){
+  if(!v || !(v.yeas||v.nays)) return v && v.voice ? `<div class="tally2"><span class="link">by voice vote</span></div>` : "";
+  const tot = v.yeas + v.nays || 1, p = v.party||{};
+  const party = ["R","D","I"].filter(k=>p[k]).map(k=>`<span class="p${k}">${k} ${p[k].y}–${p[k].n}</span>`).join(" ");
+  return `<div class="tally2"><b>${v.yeas}–${v.nays}</b><span class="bar"><i class="y" style="width:${100*v.yeas/tot}%"></i><i class="n" style="width:${100*v.nays/tot}%"></i></span>${party}${v.url?`<a class="link" href="${esc(v.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">roll call ↗</a>`:""}</div>`;
+}
+function evHtml(it, inStory){
+  const t = tierOf(it), v = it.vote;
+  const fail = v && v.result && !passed(v.result);
+  const ex = it.whyOverride !== undefined ? it.whyOverride : (t<=2 ? it.explain : (it.pending ? (it.explain||"").replace(/^The real vote\.\s*/,"") : ""));
+  const why = ex ? `<div class="why">${esc(ex)}</div>` : "";
+  const bk = billOf(it);
+  const chipLine = (!inStory && bk) ? `<div style="margin-top:2px">${chip(bk)}</div>` : "";
+  return `<div class="ev t${t} ${it.kind}${fail?" fail":""}${S.open.has(it.id)?" open":""}" onclick="toggleRow(this,'${esc(it.id)}')">
+    <div class="ev-t">${it.approx&&!it.is_roll?"~":""}${fmtTime(it.ts)}</div><div class="ev-r"><span class="ev-d"></span></div>
+    <div class="ev-c"><div class="hl">${it.hlOverride || headline(it)}${t<=2?tagFor(it):""}</div>${t<=2?tallyLine(v):""}${why}
+      ${it.ai?`<div class="ai">${esc(it.ai)}</div>`:""}${chipLine}
+      <div class="det">${(it.texts||[it.text]).map(esc).join("<br>")}${t>2&&v?tallyLine(v):""}</div></div></div>`;
+}
+function gapHtml(h){
+  const px = Math.round(Math.min(110, 16 * Math.pow(h, 0.85)));
+  if(px < 6) return "";
+  return `<div class="gap" style="height:${px}px"><span class="gh">${px>=20?(h>=1?Math.round(h)+"h":Math.round(h*60)+"m"):""}</span><span class="ev-r"></span><span></span></div>`;
+}
+function mergeMinor(items){        // items newest-first; fold bursts of minor steps into one line
+  const out = [];
+  for(const it of items){
+    const p = out[out.length-1];
+    if(p && tierOf(it)===3 && tierOf(p)===3 && !p.vote && (new Date(p.ts)-new Date(it.ts)) < 4*6e4){
+      p.parts.unshift(it); continue; }
+    out.push(Object.assign({}, it, {parts:[it]}));
+  }
+  return out.map(u => {
+    if(u.parts.length < 2) return u;
+    const seq = u.parts;   // oldest first now
+    const pend = seq.find(x=>x.pending);
+    return Object.assign({}, u, {hlOverride: seq.map(headline).join(" <span style='color:var(--muted)'>→</span> "),
+      whyOverride: pend ? (pend.explain||"").replace(/^The real vote\.\s*/,"") : "", texts: seq.map(x=>x.text),
+      ts: seq[seq.length-1].ts});
+  });
+}
+function feedHtml(list){
+  // group consecutive events about the same bill into a story
+  const groups = [];
+  for(const it of list){ const k = billOf(it), g = groups[groups.length-1];
+    if(k && g && g.key===k) g.items.push(it); else groups.push({key:k, items:[it]}); }
+  groups.forEach(g => g.items = mergeMinor(g.items));
+  let out = "", prevT = null;
+  for(const g of groups){
+    const t0 = new Date(g.items[0].ts);
+    if(prevT) out += gapHtml((prevT - t0)/36e5);
+    if(g.key && (g.items.length > 1 || tierOf(g.items[0]) <= 3)){
+      const b = (S.data.bills||{})[g.key] || {ref:g.key};
+      out += `<div class="story-h"><span class="ev-t"></span><span class="ev-r"></span><a href="#bill-${g.key.toLowerCase()}"><span class="nm">${esc(b.name||b.ref)}</span><span class="rf">${esc(b.ref)} ›</span></a></div><div class="story-b">`;
+      g.items.forEach((it,i)=>{ if(i) out += gapHtml((new Date(g.items[i-1].ts)-new Date(it.ts))/36e5); out += evHtml(it, true); });
+      out += `</div>`;
+    } else g.items.forEach((it,i)=>{ if(i) out += gapHtml((new Date(g.items[i-1].ts)-new Date(it.ts))/36e5); out += evHtml(it, false); });
+    prevT = new Date(g.items[g.items.length-1].ts);
+  }
+  return out;
+}
+function nowSentence(n){
+  const k = billOf(n), nm = bname(k);
+  if(/^In recess/.test(n.text||"")) return {s:"In recess", on:false};
+  if(/^Adjourned/.test(n.text||"")) return {s:"Adjourned", on:false};
+  if(!n.label) return {s: n.text || "No activity yet", on:false};
+  if(n.vote && (n.vote.yeas||n.vote.nays||n.vote.result)) return {s:`${headline(n)}${nm?` <span style="color:var(--muted);font-weight:600">· ${esc(nm)}</span>`:""}`, on:true};
+  if(n.label==="Amendment" || n.label==="Passage" || n.label==="Confirmation") return {s:`${esc(n.label)} vote · ${esc(nm)}`, on:true};
+  const verb = {"Debate":"Debating","Now considering":"Taking up","The rule":"Debating the rule for","On the floor":"Working on","Vote postponed":"Vote postponed on"}[n.label] || n.label + ":";
+  return {s:`${esc(verb)} ${esc(nm || "")}`.trim(), on:true};
+}
 function renderNow(){
   const st = S.data.status, out = [];
   for(const ch of ["house","senate"]){
     if(S.ch!=="both" && S.ch!==ch) continue;
-    const n = st.now[ch] || {}, day = st[ch+"_day"];
-    out.push(`<div class="nowcard ${ch}"><div class="k">${ch.toUpperCase()} · RIGHT NOW ${day?`<span style="font-weight:500">· ${fmtDay(day+"T12:00")}</span>`:""}
-      ${n.label?`<span class="badge b-${n.kind}">${esc(n.label)}</span>`:""}</div>
-      <div class="t">${esc(n.text||"—")}</div>${n.explain?`<div class="e">${esc(n.explain)}</div>`:""}
-      ${(n.bill_keys||[]).length?`<div>${chips(n.bill_keys)}</div>`:""}
-      ${n.next?`<div class="e"><span class="badge b-schedule">NEXT</span> ${esc(n.next)}</div>`:""}</div>`);
+    const n = st.now[ch] || {}, ns = nowSentence(n), day = st[ch+"_day"], k = billOf(n);
+    const today = new Date().toISOString().slice(0,10);
+    const sess = !ns.on ? ns.s : (day && day < new Date(Date.now()-5*36e5).toISOString().slice(0,10) ? `Last met ${fmtDay(day+"T12:00")}` : "In session");
+    out.push(`<div class="hero-c ${ch}"><div class="hero-k">${ch.toUpperCase()} <span class="st"><span class="sdot ${ns.on?"":"off"}"></span> ${esc(sess)}</span></div>
+      <div class="hero-s">${ns.s}</div>
+      ${k?`<a class="link" href="#bill-${k.toLowerCase()}">${esc(((S.data.bills||{})[k]||{}).ref||k)}: bill page and history ›</a>`:""}
+      ${n.explain?`<div class="hero-w">${esc(n.explain)}</div>`:""}
+      ${n.next?`<div class="hero-n"><b>NEXT</b>${esc(n.next)}</div>`:""}</div>`);
   }
-  $("#now").innerHTML = out.join("");
+  $("#now").className = "hero"; $("#now").innerHTML = out.join("");
   $("#now").style.gridTemplateColumns = S.ch==="both" ? "" : "1fr";
 }
 function renderFeed(){
   const d = S.data, chs = S.ch==="both" ? ["house","senate"] : [S.ch];
   const cols = chs.map(ch => {
-    const list = (d[ch]||[]).filter(keep);
-    const hidden = (d[ch]||[]).length - list.length;
-    return `<div class="col"><h2><b>${ch==="house"?"House":"Senate"}</b> ${list.length} items${hidden?` · ${hidden} hidden by filters`:""}</h2>
-      ${list.length ? list.map(it=>itemHtml(it,false)).join("") : `<div class="empty">Nothing to show${hidden?" with these filters":""}.</div>`}</div>`;
+    const all = d[ch]||[];
+    const carry = all.filter(i=>i.carry);
+    const list = all.filter(i=>!i.carry).filter(keep);
+    const hidden = all.length - carry.length - list.length;
+    const exp = carry.length && !S.votesOnly ? `<div class="expect"><h4>Expected today (from last night's Senate log)</h4><ul>${carry.slice().reverse().map(c=>`<li class="${c.done?"done":""}">${esc(c.text)}</li>`).join("")}</ul></div>` : "";
+    return `<div class="fcol"><h2><b>${ch==="house"?"House":"Senate"}</b> ${list.length} events${hidden?` · ${hidden} routine hidden`:""}</h2>
+      ${exp}${list.length ? feedHtml(list) : `<div class="empty">Nothing to show${hidden?" with these filters":""}.</div>`}</div>`;
   });
-  $("#feedView").innerHTML = `<div class="cols" style="${chs.length===1?"grid-template-columns:1fr":""}">${cols.join("")}</div>`;
+  $("#feedView").innerHTML = `<div class="cols" style="gap:34px;${chs.length===1?"grid-template-columns:1fr":""}">${cols.join("")}</div>`;
 }
 const COLS = [
   ["ts","When"],["chamber","Chamber"],["badge","Type"],["label","What it is"],["measure","Bill"],
@@ -422,9 +605,10 @@ function renderStatus(){
   $("#dot").classList.toggle("stale", !fresh);
   $("#updated").textContent = (fresh?"Live · ":"Stale · ") + "updated " + fmtTime(st.updated);
   const errs = (st.errors||[]).map(([u,e])=>`<span class="err">Couldn't reach ${esc(new URL(u).host)} (${esc(e)})</span>`);
-  if(st.ai==="off") errs.push(`Plain-English AI lines are off (set ANTHROPIC_API_KEY to turn them on)`);
   if(st.ai_error) errs.push(`<span class="err">AI: ${esc(st.ai_error)}</span>`);
   $("#status").innerHTML = errs.join(" · ");
+  $("#foot").innerHTML = `Sources: House Clerk, Senate Periodical Press Gallery, senate.gov roll calls, GovInfo. Updated every minute or two on weekdays.
+    ${st.ai==="off" ? "AI explanations are off (add an ANTHROPIC_API_KEY repository secret to turn them on)." : "AI explanations by Claude."}`;
 }
 function render(){
   if(!S.data) return;

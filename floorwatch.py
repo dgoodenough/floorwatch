@@ -272,6 +272,17 @@ def bill_refs(text: str) -> list[str]:
     return out
 
 
+FLOOR_NAME = re.compile(r"\b(H\.\s?R\.|S\.|H\.\s?J\.\s?Res\.|S\.\s?J\.\s?Res\.)\s?(\d+),\s+(?:the\s+)?"
+                        r"([A-Z][A-Za-z0-9'’&\- ]{3,90}?\b(?:Act|Resolution)(?: of \d{4})?)")
+
+
+def floor_names(text: str) -> dict:
+    out = {}
+    for m in FLOOR_NAME.finditer(text or ""):
+        out[canon(m.group(1) + m.group(2))] = norm(m.group(3))
+    return out
+
+
 def canon(ref: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", (ref or "").upper())
 
@@ -718,6 +729,16 @@ class Engine:
         if store:
             log_day = max(store)
             entries = [{"day": log_day, "text": t} for t in store[log_day]]
+            prior = [d for d in sorted(store) if d < log_day]
+            if prior and not any(classify("senate", t)["kind"] == "schedule" for t in store[log_day]):
+                carry = []
+                for t in store[prior[-1]]:
+                    if classify("senate", t)["kind"] == "schedule" and "will convene" not in t.lower() \
+                            or (carry and re.match(r"^(Motion|Adoption|Passage|Confirmation|Cloture)", t)):
+                        carry.append(t)
+                self.carryover = [{"day": prior[-1], "text": t} for t in carry]
+            else:
+                self.carryover = []
             first_poll = self.state.setdefault("senate_first_poll", {})
             prev = None
             for i, e in enumerate(entries):
@@ -792,6 +813,20 @@ class Engine:
         tallies = {(r["ts"][:10], r["vote"]["yeas"], r["vote"]["nays"]) for r in votes}
         items = [i for i in items if i.get("is_roll") or not (
             i.get("vote") and (i["ts"][:10], i["vote"].get("yeas"), i["vote"].get("nays")) in tallies)]
+        done_text = " ".join((i.get("text", "") + " " + ((i.get("vote") or {}).get("question") or "")).lower()
+                             for i in items if i.get("vote"))
+        steps = [("waive", r"waive"), ("adoption", r"adoption of|on the amendment|amdt"), ("cloture", r"cloture"),
+                 ("passage", r"passage|on passage"), ("confirmation", r"confirm")]
+        for i, e in enumerate(getattr(self, "carryover", [])):
+            d = dt.date.fromisoformat(log_day) if log_day else today
+            low = e["text"].lower()
+            done = any(k in low[:40] and re.search(p, done_text) for k, p in steps) and not low.startswith("at ")
+            it = {"id": "s-carry-" + hashlib.sha1(e["text"].encode()).hexdigest()[:10], "chamber": "senate",
+                  "ts": dt.datetime(d.year, d.month, d.day, 0, 0, i, tzinfo=EASTERN).isoformat(),
+                  "approx": True, "carry": True, "done": done, "text": e["text"], "refs": bill_refs(e["text"]), "vote": None,
+                  "kind": "schedule", "badge": KINDS["schedule"], "label": "Expected today",
+                  "explain": "From the end of the previous day's Senate log."}
+            items.append(it)
         items.sort(key=lambda x: x["ts"], reverse=True)
         return items, votes, log_day
 
@@ -850,10 +885,19 @@ class Engine:
         for k, tgt in list(self.rules.items()):
             rule_of.setdefault(k, canon(tgt))
 
-        names = {}
+        fnames = self.state.setdefault("floor_names", {})
+        for it in items:
+            for k, n in floor_names(it.get("text", "")).items():
+                fnames[k] = n
+        names, aka = {}, {}
         for k in wanted:
             info = infos.get(k, {})
             name = info.get("short") or plain_name(info.get("display") or info.get("official") or "")
+            if fnames.get(k) and fnames[k].lower() != (name or "").lower():
+                # The floor uses the name the bill goes by now (e.g. a shell bill carrying a new text).
+                if name:
+                    aka[k] = name
+                name = fnames[k]
             if not name:
                 live_titles = [x.get("title") for x in self.bill_live.get(k, {}).values() if x.get("title")]
                 name = live_titles[-1] if live_titles else ""
@@ -914,7 +958,7 @@ class Engine:
                 news = parse_news(rss) if rss else []
                 self.f.errors.pop(NEWS_URL.format(q=urllib.parse.quote(q + " when:30d")), None)
 
-            bills[k] = {"key": k, "ref": bill_display(k), "name": names[k], "congress": c,
+            bills[k] = {"key": k, "ref": bill_display(k), "name": names[k], "aka": aka.get(k, ""), "congress": c,
                         "official": info.get("official", ""), "sponsor": info.get("sponsor", ""),
                         "policy": info.get("policy", ""), "introduced": info.get("introduced", ""),
                         "summary": info.get("summary", "")[:1500], "links": links, "news": news,
@@ -944,7 +988,8 @@ class Engine:
         for it in items[:15]:
             if it["kind"] in ("debate", "final", "procedural", "amendment"):
                 return {"text": it["text"], "kind": it["kind"], "label": it["label"], "explain": it["explain"],
-                        "about": it.get("about", ""), "ts": it["ts"], "bill_keys": it.get("bill_keys", [])}
+                        "about": it.get("about", ""), "ts": it["ts"], "bill_keys": it.get("bill_keys", []),
+                        "vote": it.get("vote"), "pending": it.get("pending", False)}
         return {"text": latest["text"], "kind": latest["kind"]}
 
     def refresh(self):
