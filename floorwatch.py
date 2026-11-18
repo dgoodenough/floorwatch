@@ -545,12 +545,16 @@ class Explainer:
     def drain(self, max_items: int = 25, deadline: float = 120):
         """Used by --once: explain up to max_items queued items, then stop."""
         end = time.time() + deadline
+        fails = 0
         for _ in range(max_items):
+            if fails >= 3:
+                return  # don't burn the run retrying a broken key/model
             with self.lock:
                 job = self.queue.pop(0) if self.queue else None
             if not job or time.time() > end:
                 return
-            self._call(*job)
+            ok = self._call(*job)
+            fails = 0 if ok else fails + 1
 
     def _worker(self):
         while True:
@@ -576,10 +580,17 @@ class Explainer:
                     self.cache[item_id] = text
                     self.path.write_text(json.dumps(self.cache))
                 self.last_error = ""
+                return True
+            except urllib.error.HTTPError as e:
+                try:
+                    detail = json.loads(e.read()).get("error", {}).get("message", "")
+                except Exception:
+                    detail = ""
+                self.last_error = f"HTTP {e.code}: {detail[:160]}"
             except Exception as e:
                 self.last_error = f"{type(e).__name__}: {str(e)[:120]}"
-                time.sleep(3)
-            time.sleep(0.3)
+            time.sleep(1)
+            return False
 
 
 AI_PROMPT = """You explain U.S. congressional floor activity to a smart viewer watching a livestream.
@@ -1275,6 +1286,9 @@ def main(argv=None):
         engine.refresh()
         engine.ai.drain()
         engine.apply_ai()
+        engine.feed["status"]["ai_error"] = engine.ai.last_error
+        if engine.ai.last_error:
+            print("AI error:", engine.ai.last_error)
         out = Path(args.out)
         out.mkdir(parents=True, exist_ok=True)
         (out / "feed.json").write_text(json.dumps(engine.feed))
