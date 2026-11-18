@@ -581,7 +581,8 @@ def parse_hearings(xml_bytes: bytes, today: dt.date, days: int = 7) -> list[dict
     for m in root.iter("meeting"):
         g = lambda t: norm(m.findtext(t) or "")
         try:
-            d = dt.datetime.strptime(g("date"), "%d-%b-%Y").date()
+            d = dt.date.fromisoformat(g("date_iso_8601")[:10]) if g("date_iso_8601") else \
+                dt.datetime.strptime(g("date")[:11], "%d-%b-%Y").date()
         except ValueError:
             continue
         if not (today <= d <= today + dt.timedelta(days=days)):
@@ -931,6 +932,21 @@ class Engine:
                 if i.get("source") == SRC_DP and roll.get("approx", True):
                     roll["ts"], roll["approx"] = i["ts"], False   # the press log has the real time
                 continue
+            kept.append(i)
+        items = kept
+        rolls_today = [r for r in items if r.get("is_roll")]
+        kept = []
+        for i in items:
+            if not i.get("is_roll") and re.search(r"\bbegan (a )?(roll call )?vot(e|ing)\b|\bnow voting\b", i["text"], re.I):
+                t = dt.datetime.fromisoformat(i["ts"])
+                match = [r for r in rolls_today if dt.timedelta(0) <= dt.datetime.fromisoformat(r["ts"]) - t <= dt.timedelta(minutes=120)]
+                if match:
+                    r = min(match, key=lambda r: r["ts"])
+                    r.setdefault("notes", []).insert(0, f"Voting began {t.strftime('%-I:%M %p')}.")
+                    continue
+                i.update({"kind": "debate", "badge": KINDS["debate"], "label": "Vote under way",
+                          "explain": "A roll call vote is open; the result will appear here when it's announced."})
+                i.pop("pending", None)
             kept.append(i)
         items = kept
         show = log_day or today.isoformat()

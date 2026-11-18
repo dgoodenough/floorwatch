@@ -358,7 +358,7 @@ function headline(it){
   }
   if(it.pending) return `Motion offered: ${esc(L.toLowerCase())}`;
   const map2 = {"Debate":"Debate under way","Now considering":"Taken up on the floor","The rule":"The rule for this bill is up first",
-    "Vote postponed":"Vote requested, postponed until later","On the floor":"On the floor","Cloture filed":"Cloture filed: test vote set up"};
+    "Vote postponed":"Vote requested, postponed until later","Vote under way":"Vote under way","Consent request blocked":"Consent request blocked","On the floor":"On the floor","Cloture filed":"Cloture filed: test vote set up"};
   if(it.kind==="schedule" || it.kind==="routine" || it.kind==="info") return esc(map2[L] && it.kind!=="schedule" ? map2[L] : it.text);
   return esc(map2[L] || L);
 }
