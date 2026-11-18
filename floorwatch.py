@@ -97,8 +97,8 @@ class Fetcher:
                 path.write_bytes(data)
             return data
         except urllib.error.HTTPError as e:
-            if ttl and path.exists():
-                return path.read_bytes()  # stale copy beats nothing
+            if ttl and path.exists() and time.time() - path.stat().st_mtime < 3 * 3600:
+                return path.read_bytes()  # a copy from the last few hours beats nothing
             if e.code == 404:
                 if immutable:
                     self.missing.add(url)
@@ -106,7 +106,7 @@ class Fetcher:
                 self.errors[url] = f"HTTP {e.code}"
             return None
         except Exception as e:  # network down, timeout, TLS...
-            if ttl and path.exists():
+            if ttl and path.exists() and time.time() - path.stat().st_mtime < 3 * 3600:
                 return path.read_bytes()
             self.errors[url] = type(e).__name__ + ": " + str(e)[:120]
             return None
@@ -288,7 +288,13 @@ def rule_target(text: str) -> str | None:
 
 def vote_outcome(text: str) -> dict | None:
     t = norm(text)
-    m = re.search(r"(\d{1,3})\s*-\s*(\d{1,3})(?:\s*\((?:Roll|Record) no\.\s*(\d+)\))?", t, re.I)
+    m = None
+    for cand in re.finditer(r"(\d{1,3})\s*-\s*(\d{1,3})(?:\s*\((?:Roll|Record) no\.\s*(\d+)\))?", t, re.I):
+        before = t[max(0, cand.start() - 12):cand.start()]
+        if re.search(r"(Rept\.|Law|No\.|Res\.|Number:?|Calendar)\s*$", before, re.I):
+            continue  # report / law / calendar numbers, not a tally
+        m = cand
+        break
     roll = re.search(r"Roll no\.\s*(\d+)", t, re.I)
     res = re.search(r"\b(Agreed to|Not Agreed to|Failed|Passed|Confirmed|Rejected|Adopted|Invoked|"
                     r"Not invoked|Sustained|Overridden)\b", t, re.I)
@@ -698,14 +704,24 @@ class Engine:
         seen = self.state.setdefault("senate_seen", {})
         log_day = None
 
-        data = self.f.get(SENATE_LOG_URL)
+        # The press gallery page sometimes serves an older day, and senate.gov sometimes refuses
+        # requests. So keep every entry ever seen, per day, and never move backwards.
+        store = self.state.setdefault("senate_log", {})
+        data = self.f.get(SENATE_LOG_URL, ttl=45)
         if data:
-            entries = parse_senate_log(data)
+            for e in parse_senate_log(data):
+                lst = store.setdefault(e["day"], [])
+                if e["text"] not in lst:
+                    lst.append(e["text"])
+        for old in sorted(store)[:-10]:
+            del store[old]
+        if store:
+            log_day = max(store)
+            entries = [{"day": log_day, "text": t} for t in store[log_day]]
             first_poll = self.state.setdefault("senate_first_poll", {})
             prev = None
             for i, e in enumerate(entries):
                 d = dt.date.fromisoformat(e["day"])
-                log_day = e["day"]
                 first_poll.setdefault(e["day"], now_et().isoformat())
                 key = f"s-log-{e['day']}-" + hashlib.sha1(e["text"].encode()).hexdigest()[:10]
                 if key not in seen:
@@ -729,7 +745,7 @@ class Engine:
 
         # Roll-call votes for the whole session (one file), detail for recent ones.
         votes = []
-        menu = self.f.get(SENATE_MENU_URL.format(c=c, s=s))
+        menu = self.f.get(SENATE_MENU_URL.format(c=c, s=s), ttl=45)
         recent_cut = (today - dt.timedelta(days=max(7, self.days_back * 2))).isoformat()
         if menu:
             try:
@@ -739,8 +755,9 @@ class Engine:
             detail = {}
             recent = [v for v in menu_votes if v["day"] >= recent_cut]
             with cf.ThreadPoolExecutor(6) as ex:
-                futs = {ex.submit(self.f.get, SENATE_VOTE_URL.format(c=c, s=s, n=v["num"]),
-                                  v["day"] < today.isoformat()): v["num"] for v in recent}
+                # A recorded vote never changes, so each one is downloaded once.
+                futs = {ex.submit(self.f.get, SENATE_VOTE_URL.format(c=c, s=s, n=v["num"]), True): v["num"]
+                        for v in recent}
                 for fu in futs:
                     d = fu.result()
                     if d:
@@ -748,6 +765,10 @@ class Engine:
                             detail[futs[fu]] = parse_senate_vote(d)
                         except ET.ParseError:
                             pass
+            vote_days = [v["day"] for v in menu_votes if v["day"] <= today.isoformat()]
+            show_day = max([d for d in (log_day, max(vote_days, default=None)) if d], default=today.isoformat())
+            if log_day and show_day > log_day:
+                items = []  # the log hasn't caught up to today's votes yet
             for v in menu_votes:
                 det = detail.get(v["num"], {})
                 text = v["title"] or v["question"]
@@ -764,8 +785,9 @@ class Engine:
                         and not re.search(r"60|two-thirds", row["explain"]):
                     row["explain"] = (row["explain"] + f" Needs {det['majority']}.").strip()
                 votes.append(row)
-                if v["day"] >= (log_day or today.isoformat()):
+                if v["day"] >= show_day:
                     items.append(row)
+            log_day = show_day
         self.state_path.write_text(json.dumps(self.state))
         tallies = {(r["ts"][:10], r["vote"]["yeas"], r["vote"]["nays"]) for r in votes}
         items = [i for i in items if i.get("is_roll") or not (
@@ -831,7 +853,7 @@ class Engine:
         names = {}
         for k in wanted:
             info = infos.get(k, {})
-            name = info.get("short") or info.get("display") or info.get("official") or ""
+            name = info.get("short") or plain_name(info.get("display") or info.get("official") or "")
             if not name:
                 live_titles = [x.get("title") for x in self.bill_live.get(k, {}).values() if x.get("title")]
                 name = live_titles[-1] if live_titles else ""
@@ -1014,6 +1036,20 @@ def bill_display(canon_ref: str) -> str:
     return f"{DISPLAY[m.group(1)]} {m.group(2)}" if m else canon_ref
 
 
+def plain_name(title: str) -> str:
+    """Turn long formal titles into something readable."""
+    t = norm(title).rstrip(".")
+    m = re.search(r"congressional disapproval .*?of the rule submitted by (the )?(.+?) relating to [\"“]?(.+?)[\"”]?$", t, re.I)
+    if m:
+        agency = re.sub(r"^(Department|Bureau|Office) of (the )?", "", m.group(2)).strip()
+        return f"Overturn {agency} rule: " + re.sub(r'["“”]', "", m.group(3)).strip()
+    t = re.sub(r",? and for other purposes$", "", t, flags=re.I)
+    t = re.sub(r"^(A bill|A joint resolution|A resolution|A concurrent resolution)\s+(to\s+)?", "", t, flags=re.I)
+    t = re.sub(r"^To\s+", "", t)
+    t = t.replace("United States", "U.S.")
+    return t[:1].upper() + t[1:] if t else t
+
+
 def strip_html(h: str) -> str:
     return norm(re.sub(r"<[^>]+>", " ", h or ""))
 
@@ -1103,6 +1139,9 @@ def billstatus_items(canon_ref: str, info: dict, about: str = "") -> list[dict]:
     for i, a in enumerate(acts):
         loc = a["src_code"] == "9" or a["src"] == "Library of Congress"
         if loc and a["type"] in ("Floor", "ResolvingDifferences", "Veto") and a["date"] in nonloc_floor_days:
+            continue
+        if loc and a["type"] == "IntroReferral" and any(
+                x["type"] == "IntroReferral" and x["date"] == a["date"] and x is not a for x in acts):
             continue
         key = (a["date"], a["text"][:80].lower())
         if key in seen or not a["date"]:
