@@ -163,6 +163,7 @@ HOUSE_RULES = [
     (r"providing for consideration|rule provides|rules committee", "debate", "The rule",
      "This resolution sets the ground rules (time, amendments) for debating another bill."),
     (r"considered under suspension|considered under the provisions of rule|considered as privileged|"
+     r"considered as unfinished business|considered as (a )?privileged|"
      r"resolved (itself )?into the committee of the whole|considered by unanimous consent|"
      r"called up|took up|committee of the whole", "debate", "Now considering",
      "The House has taken this up."),
@@ -401,7 +402,9 @@ class _LogParser(HTMLParser):
 DATE_HEAD = re.compile(r"^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),\s+"
                        r"([A-Z][a-z]+ \d{1,2}, \d{4})$")
 SENATE_NOISE = re.compile(r"for reference purposes only|latest floor log|^on the floor$|"
-                          r"^page \d|^(previous|next)$|congressional record|^\d+$", re.I)
+                          r"^page \d|^(previous|next)$|congressional record|^\d+$|room s-\d|"
+                          r"washington,? d\.?c\.? \d{5}|\(\d{3}\) ?\d{3}-\d{4}|\d{3}-\d{3}-\d{4}|"
+                          r"^(follow us|contact|privacy|accessibility|home)\b", re.I)
 
 
 def parse_senate_log(html_bytes: bytes) -> list[dict]:
@@ -768,6 +771,8 @@ class Engine:
             return {"text": "No floor activity found yet.", "kind": "routine"}
         latest = items[0]
         low = latest["text"].lower()
+        if re.search(r"do now recess|\brecessed\b|stands in recess", low):
+            return {"text": "In recess. " + latest["text"], "kind": "routine", "ts": latest["ts"]}
         if re.search(r"\badjourn(ed)?\b", low) and "motion to adjourn" not in low:
             sched = next((i for i in items if i["kind"] == "schedule"), None)
             return {"text": "Adjourned. " + (sched["text"] if sched else latest["text"]), "kind": "routine"}
