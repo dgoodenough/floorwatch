@@ -1,0 +1,55 @@
+name: Update feed
+
+# Every 5 minutes (GitHub may delay scheduled runs). Each run refreshes 4 times,
+# a minute apart, so the page is usually 1-2 minutes behind the floor.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-feed
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore previous state from the data branch
+        run: |
+          mkdir -p data
+          if git ls-remote --exit-code origin data >/dev/null 2>&1; then
+            git fetch --depth=1 origin data
+            git archive FETCH_HEAD | tar -x -C data
+          fi
+
+      - name: Refresh and publish (4 times, a minute apart)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          git config user.name "floorwatch-bot"
+          git config user.email "floorwatch-bot@users.noreply.github.com"
+          publish() {
+            export GIT_INDEX_FILE="$RUNNER_TEMP/data-index"
+            rm -f "$GIT_INDEX_FILE"
+            git --work-tree=data add -A -f .
+            tree=$(git write-tree)
+            commit=$(git commit-tree "$tree" -m "feed $(date -u +%FT%TZ)")
+            git push -q -f origin "$commit:refs/heads/data"
+            unset GIT_INDEX_FILE
+          }
+          for i in 1 2 3 4; do
+            python floorwatch.py --once --data data/state --out data || true
+            [ -f data/feed.json ] && publish
+            [ "$i" -lt 4 ] && sleep 55
+          done

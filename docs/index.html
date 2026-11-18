@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FloorWatch — House &amp; Senate, decoded</title>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --ink:#1b1d22; --muted:#666b75; --line:#e3e1da;
+  --final:#1f7a4d; --final-bg:#e3f3ea;
+  --proc:#9a6200; --proc-bg:#fbf0d9;
+  --amend:#2858a8; --amend-bg:#e4ecfa;
+  --debate:#5a4fa8; --debate-bg:#ece9f9;
+  --sched:#8a3d84; --sched-bg:#f6e6f4;
+  --routine:#7b7f88; --routine-bg:#efefed;
+  --house:#2e7d5b; --senate:#3b5ba5; --R:#c0392b; --D:#2c6fbb; --I:#7a5c9e;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141518; --panel:#1d1f24; --ink:#e9e9ec; --muted:#9aa0aa; --line:#2d3038;
+  --final:#5fcf95; --final-bg:#1b3328; --proc:#f0b54e; --proc-bg:#3a2e17;
+  --amend:#82a9f0; --amend-bg:#1d2a44; --debate:#a99df0; --debate-bg:#2a2644;
+  --sched:#e19ad9; --sched-bg:#3a2238; --routine:#9aa0aa; --routine-bg:#26282d;
+  --house:#5fcf95; --senate:#82a9f0; --R:#ef7d6f; --D:#7fb0ec;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 16px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:19px;margin:0;letter-spacing:-.01em}
+h1 span{color:var(--muted);font-weight:500}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:#2fbf71;animation:pulse 2s infinite}
+.dot.stale{background:#d9822b;animation:none}
+@keyframes pulse{50%{opacity:.35}}
+.spacer{flex:1}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:none;color:var(--ink);padding:6px 11px;font:inherit;font-size:13px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+.chip.on{border-color:var(--ink);font-weight:600}
+input[type=search]{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;min-width:180px}
+main{padding:14px 16px 60px;max-width:1400px;margin:0 auto}
+.now{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.nowcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-top:4px solid var(--house)}
+.nowcard.senate{border-top-color:var(--senate)}
+.nowcard .k{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);display:flex;gap:8px;align-items:center}
+.nowcard .t{margin-top:6px;font-weight:600}
+.nowcard .e{margin-top:4px;color:var(--muted);font-size:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.col h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;color:var(--muted);display:flex;gap:8px;align-items:baseline}
+.col h2 b{color:var(--ink)}
+.item{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--routine);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.item.final{border-left-color:var(--final)} .item.procedural{border-left-color:var(--proc)}
+.item.amendment{border-left-color:var(--amend)} .item.debate{border-left-color:var(--debate)}
+.item.schedule{border-left-color:var(--sched)}
+.item.routine{opacity:.8}
+.row1{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px;min-width:62px}
+.badge{font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.b-final{background:var(--final-bg);color:var(--final)} .b-procedural{background:var(--proc-bg);color:var(--proc)}
+.b-amendment{background:var(--amend-bg);color:var(--amend)} .b-debate{background:var(--debate-bg);color:var(--debate)}
+.b-schedule{background:var(--sched-bg);color:var(--sched)} .b-routine,.b-info{background:var(--routine-bg);color:var(--routine)}
+.ch{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--house)} .ch.senate{color:var(--senate)}
+.label{font-weight:650}
+.explain{margin-top:4px}
+.ai{margin-top:5px;font-size:14px;padding:6px 9px;border-radius:7px;background:var(--routine-bg)}
+.ai::before{content:"In plain English: ";font-weight:650}
+.official{margin-top:5px;color:var(--muted);font-size:13px}
+.measure{font-size:13px;margin-top:4px}
+.measure b{font-weight:650}
+.vote{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:7px;font-size:13px}
+.res{font-weight:700}
+.res.pass{color:var(--final)} .res.fail{color:var(--R)}
+.bar{display:flex;height:8px;width:150px;border-radius:4px;overflow:hidden;background:var(--routine-bg)}
+.bar i{display:block;height:100%} .bar .y{background:var(--final)} .bar .n{background:var(--R);opacity:.75}
+.party span{margin-right:8px;font-variant-numeric:tabular-nums}
+.pR{color:var(--R);font-weight:650} .pD{color:var(--D);font-weight:650} .pI{color:var(--I);font-weight:650}
+a{color:inherit} .link{font-size:12px;color:var(--muted)}
+.approx{font-size:10px;color:var(--muted)}
+.empty{color:var(--muted);padding:20px;text-align:center;border:1px dashed var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:var(--panel);cursor:pointer;user-select:none;white-space:nowrap;font-size:12px;color:var(--muted)}
+th.sorted{color:var(--ink)} th.sorted::after{content:" ▾"} th.sorted.asc::after{content:" ▴"}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap{overflow:auto;max-height:calc(100vh - 170px);border-radius:10px}
+.status{font-size:12px;color:var(--muted);margin-top:4px}
+.status .err{color:var(--R)}
+#decoder{display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 16px 12px;margin-bottom:14px}
+#decoder.open{display:block}
+#decoder h3{font-size:14px;margin:12px 0 4px}
+#decoder dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:14px}
+#decoder dt{font-weight:650}
+#decoder dd{margin:0;color:var(--muted)}
+@media (max-width:900px){.cols,.now{grid-template-columns:1fr}.hide-sm{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>FloorWatch <span>· Congress, decoded</span></h1>
+    <span class="live"><span class="dot" id="dot"></span><span id="updated">loading…</span></span>
+    <span class="spacer"></span>
+    <button class="chip" id="decoderBtn">Decoder</button>
+  </div>
+  <div class="controls">
+    <div class="seg" id="viewSeg"><button data-v="feed" class="on">Live feed</button><button data-v="table">Votes table</button></div>
+    <div class="seg" id="chSeg"><button data-c="both" class="on">Both</button><button data-c="house">House</button><button data-c="senate">Senate</button></div>
+    <button class="chip on" id="hideRoutine">Hide routine</button>
+    <button class="chip" id="votesOnly">Votes only</button>
+    <input type="search" id="q" placeholder="Filter (bill, name, word)…">
+  </div>
+  <div class="status" id="status"></div>
+</header>
+<main>
+  <section id="decoder">
+    <h3>How to read the badges</h3>
+    <dl>
+      <dt><span class="badge b-final">REAL VOTE</span></dt><dd>Decides the actual thing: passes a bill, confirms a nominee, overrides a veto.</dd>
+      <dt><span class="badge b-procedural">PROCEDURAL</span></dt><dd>About <em>how</em> or <em>whether</em> to proceed. Can still be decisive: Senate cloture on a bill is often the real test.</dd>
+      <dt><span class="badge b-amendment">AMENDMENT</span></dt><dd>A vote on changing the bill, not passing it.</dd>
+      <dt><span class="badge b-debate">ON THE FLOOR</span></dt><dd>What they're debating or have taken up. No vote yet.</dd>
+      <dt><span class="badge b-schedule">COMING UP</span></dt><dd>Scheduled votes, cloture filings, when they'll meet next.</dd>
+      <dt><span class="badge b-routine">ROUTINE</span></dt><dd>Prayer, pledge, journal, quorum calls, adjournment.</dd>
+    </dl>
+    <h3>House: a typical bill's path</h3>
+    <dl>
+      <dt>1. The rule (H.Res.)</dt><dd>First the "previous question" vote, then adopting the rule. Both set debate terms and are party-line. Neither is the bill.</dd>
+      <dt>2. Debate + amendments</dt><dd>Amendment votes change the text.</dd>
+      <dt>3. Motion to recommit</dt><dd>The minority's last shot. Almost always fails.</dd>
+      <dt>4. Passage</dt><dd>The real vote. "Suspension" bills skip 1–3 and need two-thirds.</dd>
+    </dl>
+    <h3>Senate: a typical bill's path</h3>
+    <dl>
+      <dt>1. Cloture on motion to proceed</dt><dd>Needs 60 just to start debating.</dd>
+      <dt>2. Motion to proceed</dt><dd>Formally starts debate.</dd>
+      <dt>3. Amendments, waivers, tabling</dt><dd>Motions to waive budget rules need 60. A "yes" on tabling kills the item.</dd>
+      <dt>4. Cloture on the bill</dt><dd>The decisive 60-vote test.</dd>
+      <dt>5. Passage</dt><dd>The real vote (simple majority).</dd>
+      <dt>Nominees</dt><dd>Cloture (simple majority), then the confirmation vote.</dd>
+    </dl>
+  </section>
+  <section class="now" id="now"></section>
+  <section id="feedView"></section>
+  <section id="tableView" style="display:none"></section>
+</main>
+<script>
+const S = {view:"feed", ch:"both", hideRoutine:true, votesOnly:false, q:"", sort:{key:"ts",asc:false}, data:null, lastOk:0};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtTime = iso => { const d = new Date(iso); return d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}); };
+const fmtDay = iso => { const d = new Date(iso); return d.toLocaleDateString([], {month:"short", day:"numeric"}); };
+const passed = r => /agreed|passed|confirmed|adopted|invoked|overridden|sustained/i.test(r||"") && !/not agreed|not invoked|rejected|failed/i.test(r||"");
+
+function partyHtml(p){
+  if(!p) return "";
+  return ["R","D","I"].filter(k=>p[k]).map(k=>`<span class="p${k}">${k} ${p[k].y}–${p[k].n}</span>`).join("");
+}
+function voteHtml(it){
+  const v = it.vote; if(!v) return "";
+  const y = v.yeas, n = v.nays, has = (y||n);
+  const tot = (y||0)+(n||0) || 1;
+  return `<div class="vote">
+    ${v.result ? `<span class="res ${passed(v.result)?"pass":"fail"}">${esc(v.result)}</span>`:""}
+    ${has ? `<span><b>${y}</b>–<b>${n}</b></span><span class="bar"><i class="y" style="width:${100*y/tot}%"></i><i class="n" style="width:${100*n/tot}%"></i></span>`:""}
+    ${v.voice ? `<span class="link">voice vote (no names recorded)</span>`:""}
+    <span class="party">${partyHtml(v.party)}</span>
+    ${v.url ? `<a class="link" href="${esc(v.url)}" target="_blank" rel="noopener">roll call ↗</a>`:""}
+  </div>`;
+}
+function itemHtml(it, showCh){
+  const measure = it.title ? `<div class="measure"><b>${esc((it.refs||[])[0]||"")}</b> ${esc(it.title)}</div>`
+                : (it.about ? `<div class="measure">About <b>${esc(it.about)}</b></div>`
+                : ((it.refs||[]).length ? `<div class="measure"><b>${esc(it.refs.join(", "))}</b></div>` : ""));
+  return `<div class="item ${it.kind}">
+    <div class="row1">
+      <span class="time">${it.approx&&it.is_roll?fmtDay(it.ts):fmtTime(it.ts)}${it.approx?' <span class="approx" title="The Senate log has no timestamps; this is roughly when it appeared">~</span>':""}</span>
+      ${showCh ? `<span class="ch ${it.chamber}">${it.chamber.toUpperCase()}</span>`:""}
+      <span class="badge b-${it.kind}">${esc(it.badge)}</span>
+      <span class="label">${esc(it.label)}</span>
+    </div>
+    ${it.explain ? `<div class="explain">${esc(it.explain)}</div>`:""}
+    ${it.ai ? `<div class="ai">${esc(it.ai)}</div>`:""}
+    ${measure}
+    <div class="official">${esc(it.text)}</div>
+    ${voteHtml(it)}
+  </div>`;
+}
+function keep(it){
+  if(S.hideRoutine && (it.kind==="routine")) return false;
+  if(S.votesOnly && !(it.vote && (it.vote.yeas||it.vote.nays||it.vote.voice||it.is_roll))) return false;
+  if(S.q){ const hay = [it.text,it.title,it.label,it.about,(it.refs||[]).join(" "),it.ai].join(" ").toLowerCase();
+    if(!S.q.toLowerCase().split(/\s+/).every(w=>hay.includes(w))) return false; }
+  return true;
+}
+function renderNow(){
+  const st = S.data.status, out = [];
+  for(const ch of ["house","senate"]){
+    if(S.ch!=="both" && S.ch!==ch) continue;
+    const n = st.now[ch] || {}, day = st[ch+"_day"];
+    out.push(`<div class="nowcard ${ch}"><div class="k">${ch.toUpperCase()} · RIGHT NOW ${day?`<span style="font-weight:500">· ${fmtDay(day+"T12:00")}</span>`:""}
+      ${n.label?`<span class="badge b-${n.kind}">${esc(n.label)}</span>`:""}</div>
+      <div class="t">${esc(n.text||"—")}</div>${n.explain?`<div class="e">${esc(n.explain)}</div>`:""}
+      ${n.next?`<div class="e"><span class="badge b-schedule">NEXT</span> ${esc(n.next)}</div>`:""}</div>`);
+  }
+  $("#now").innerHTML = out.join("");
+  $("#now").style.gridTemplateColumns = S.ch==="both" ? "" : "1fr";
+}
+function renderFeed(){
+  const d = S.data, chs = S.ch==="both" ? ["house","senate"] : [S.ch];
+  const cols = chs.map(ch => {
+    const list = (d[ch]||[]).filter(keep);
+    const hidden = (d[ch]||[]).length - list.length;
+    return `<div class="col"><h2><b>${ch==="house"?"House":"Senate"}</b> ${list.length} items${hidden?` · ${hidden} hidden by filters`:""}</h2>
+      ${list.length ? list.map(it=>itemHtml(it,false)).join("") : `<div class="empty">Nothing to show${hidden?" with these filters":""}.</div>`}</div>`;
+  });
+  $("#feedView").innerHTML = `<div class="cols" style="${chs.length===1?"grid-template-columns:1fr":""}">${cols.join("")}</div>`;
+}
+const COLS = [
+  ["ts","When"],["chamber","Chamber"],["badge","Type"],["label","What it is"],["measure","Measure"],
+  ["title","Title / question"],["result","Result"],["yeas","Yea"],["nays","Nay"],["R","R"],["D","D"],["explain","Meaning"]];
+function cell(it,k){
+  const v = it.vote||{};
+  switch(k){
+    case "ts": return it.ts; case "result": return v.result||""; case "yeas": return v.yeas??-1; case "nays": return v.nays??-1;
+    case "measure": return v.measure || (it.refs||[])[0] || ""; case "title": return v.title || it.title || v.question || it.text;
+    case "R": case "D": { const p=(v.party||{})[k]; return p ? p.y - p.n : -999; }
+    default: return it[k]||"";
+  }
+}
+function renderTable(){
+  let rows = (S.data.votes||[]).filter(it => (S.ch==="both"||it.chamber===S.ch) && keep(it));
+  const {key,asc} = S.sort;
+  rows.sort((a,b)=>{ const x=cell(a,key), y=cell(b,key); const r = (typeof x==="number"&&typeof y==="number") ? x-y : String(x).localeCompare(String(y)); return asc?r:-r; });
+  const head = COLS.map(([k,l])=>`<th data-k="${k}" class="${key===k?"sorted"+(asc?" asc":""):""}${k==="explain"?" hide-sm":""}">${l}</th>`).join("");
+  const body = rows.map(it=>{ const v=it.vote||{}, p=v.party||{};
+    const pc = k => p[k] ? `<span class="p${k}">${p[k].y}–${p[k].n}</span>` : "";
+    return `<tr>
+      <td style="white-space:nowrap">${fmtDay(it.ts)} ${it.approx&&it.is_roll?"":fmtTime(it.ts)+(it.approx?"~":"")}</td>
+      <td><span class="ch ${it.chamber}">${it.chamber.toUpperCase()}</span></td>
+      <td><span class="badge b-${it.kind}">${esc(it.badge)}</span></td>
+      <td>${esc(it.label)}</td>
+      <td style="white-space:nowrap">${v.url?`<a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(cell(it,"measure"))}</a>`:esc(cell(it,"measure"))}</td>
+      <td>${esc(cell(it,"title"))}${v.question&&v.title?`<div class="link">${esc(v.question)}</div>`:""}${it.ai?`<div class="link">${esc(it.ai)}</div>`:""}</td>
+      <td class="res ${passed(v.result)?"pass":"fail"}">${esc(v.result||"")}</td>
+      <td class="num">${v.yeas??""}</td><td class="num">${v.nays??""}</td>
+      <td class="num">${pc("R")}</td><td class="num">${pc("D")}</td>
+      <td class="hide-sm">${esc(it.explain)}</td></tr>`; }).join("");
+  $("#tableView").innerHTML = `<div class="status" style="margin-bottom:6px">${rows.length} recorded votes · Senate: full session · House: the last few legislative days · click a column to sort · R/D = yea–nay by party</div>
+    <div class="tablewrap"><table><thead><tr>${head}</tr></thead><tbody>${body || `<tr><td colspan="12" class="empty">No votes match.</td></tr>`}</tbody></table></div>`;
+  document.querySelectorAll("#tableView th").forEach(th=>th.onclick=()=>{ const k=th.dataset.k;
+    S.sort = {key:k, asc: S.sort.key===k ? !S.sort.asc : (k!=="ts" && k!=="yeas" && k!=="nays")}; renderTable(); });
+}
+function renderStatus(){
+  const st = S.data.status;
+  const fresh = Date.now() - new Date(st.updated).getTime() < (GH ? 20 : 3) * 60000;
+  $("#dot").classList.toggle("stale", !fresh);
+  $("#updated").textContent = (fresh?"Live · ":"Stale · ") + "updated " + fmtTime(st.updated);
+  const errs = (st.errors||[]).map(([u,e])=>`<span class="err">Couldn't reach ${esc(new URL(u).host)} (${esc(e)})</span>`);
+  if(st.ai==="off") errs.push(`Plain-English AI lines are off (set ANTHROPIC_API_KEY to turn them on)`);
+  if(st.ai_error) errs.push(`<span class="err">AI: ${esc(st.ai_error)}</span>`);
+  $("#status").innerHTML = errs.join(" · ");
+}
+function render(){
+  if(!S.data) return;
+  renderStatus(); renderNow();
+  $("#feedView").style.display = S.view==="feed" ? "" : "none";
+  $("#tableView").style.display = S.view==="table" ? "" : "none";
+  S.view==="feed" ? renderFeed() : renderTable();
+}
+// Two ways to get data: the local server (/api/feed), or, when hosted on GitHub Pages,
+// the feed.json that the scheduled GitHub Action publishes to the repo's "data" branch.
+const GH = location.hostname.endsWith("github.io")
+  ? {owner: location.hostname.split(".")[0], repo: location.pathname.split("/")[1] || "floorwatch"} : null;
+let lastSha = null;
+async function fetchFeed(){
+  if(!GH){ const r = await fetch("api/feed",{cache:"no-store"}); return r.json(); }
+  const raw = ref => `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${ref}/feed.json`;
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/commits/data`,
+                          {headers:{Accept:"application/vnd.github.sha"}, cache:"no-store"});
+    if(r.ok){ const sha = (await r.text()).trim();
+      if(sha === lastSha && S.data) return S.data;
+      const d = await (await fetch(raw(sha))).json(); lastSha = sha; return d; }
+  }catch(e){}
+  return (await fetch(raw("data"),{cache:"no-store"})).json();  // fallback (may lag ~5 min)
+}
+async function load(){
+  try{ S.data = await fetchFeed(); S.lastOk = Date.now(); }
+  catch(e){ /* keep showing the last data */ }
+  render();
+}
+function seg(id, attr, key){ document.querySelectorAll(`#${id} button`).forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle("on",x===b)); S[key]=b.dataset[attr]; render(); }); }
+seg("viewSeg","v","view"); seg("chSeg","c","ch");
+$("#hideRoutine").onclick = e => { S.hideRoutine=!S.hideRoutine; e.target.classList.toggle("on",S.hideRoutine); render(); };
+$("#votesOnly").onclick = e => { S.votesOnly=!S.votesOnly; e.target.classList.toggle("on",S.votesOnly); render(); };
+$("#q").oninput = e => { S.q=e.target.value.trim(); render(); };
+$("#decoderBtn").onclick = e => { $("#decoder").classList.toggle("open"); e.target.classList.toggle("on"); };
+load(); setInterval(load, GH ? 90000 : 30000);
+</script>
+</body>
+</html>

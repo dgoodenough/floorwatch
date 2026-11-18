@@ -1,0 +1,62 @@
+# FloorWatch
+
+A live feed of the House and Senate floor in plain English. Every item is labeled as one of these:
+
+- **REAL VOTE**: passage, confirmation, veto override, or agreeing to the other chamber's version
+- **PROCEDURAL**: rules, the previous question, cloture, motions to table, recommit or waive
+- **AMENDMENT**: a vote on changing the bill, not on the bill itself
+- **ON THE FLOOR**: what they're debating right now
+- **COMING UP**: postponed votes, cloture filings, what's scheduled next
+- **ROUTINE**: prayer, the journal, quorum calls (hidden by default)
+
+Each item has a one-line explanation, the official text, the vote tally with the R and D split, and a link to the roll call. A procedural vote on a House "rule" also names the bill it's actually about. The **Votes table** view has a sortable list of every recorded vote.
+
+## Live site
+
+The site is at **https://dgoodenough.github.io/floorwatch/**.
+
+- `.github/workflows/update-feed.yml` runs every 5 minutes. Each run refreshes 4 times, a minute apart, and publishes `feed.json` to the `data` branch. GitHub sometimes delays scheduled runs, so the page is usually 1–5 minutes behind the floor.
+- `.github/workflows/pages.yml` deploys `docs/index.html` to GitHub Pages. The page reads the newest `feed.json` from the `data` branch every 90 seconds.
+- To turn on the AI lines, add an `ANTHROPIC_API_KEY` repository secret (Settings → Secrets and variables → Actions).
+
+## Run it locally instead
+
+You need Python 3.9 or newer. There's nothing to install.
+
+```bash
+python3 floorwatch.py
+# then open http://localhost:8765
+```
+
+Options:
+
+| flag | what it does |
+|---|---|
+| `--host 0.0.0.0` | lets you open it from your phone on the same Wi-Fi at `http://<computer-ip>:8765` |
+| `--every 60` | seconds between checks of the official feeds |
+| `--days 3` | how many recent House legislative days to load into the votes table |
+| `--date 2026-11-17` | replays a past day |
+
+## Optional: AI "In plain English" lines
+
+When running locally:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+python3 floorwatch.py
+```
+
+With a key set, each significant item also gets a neutral one-sentence explanation from Claude Haiku. Explanations are cached in `floorwatch_data/ai_cache.json`, so each item is only explained once. To use a different model, set `FLOORWATCH_MODEL`.
+
+## Where the data comes from (all official, no keys needed)
+
+- **House floor log**: `clerk.house.gov/floor/YYYYMMDD.xml`, the Clerk's timestamped floor actions, updated in near real time
+- **House roll calls**: `clerk.house.gov/evs/YYYY/rollNNN.xml`, for the question, the bill title and the party split
+- **Senate floor log**: `periodicalpress.senate.gov/on-the-floor`, the Periodical Press Gallery's running log. It has no timestamps, so those entries show a `~` and an approximate time.
+- **Senate roll calls**: the `senate.gov` session vote list and per-vote XML, for the exact time, 60-vote thresholds and the party split
+
+## Notes
+
+- The labels come from pattern rules (`HOUSE_RULES` and `SENATE_RULES` in `floorwatch.py`). If something is labeled wrong, add or reorder a rule. The first match wins.
+- If a source can't be reached or changes its format, a red note appears under the header and the rest keeps working.
+- When running locally, cached roll calls and Senate first-seen times are stored in `floorwatch_data/`; on the live site they're stored in the `data` branch. Delete that folder or branch to reset.
