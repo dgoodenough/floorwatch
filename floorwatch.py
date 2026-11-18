@@ -179,6 +179,10 @@ HOUSE_RULES = [
 ]
 
 SENATE_RULES = [
+    (r"(asked|requested|sought) unanimous consent.{0,300}\bobject(ed|ion)", "debate", "Consent request blocked",
+     "A senator tried to pass this instantly by unanimous consent; a single objection stops it. Often done to make a point."),
+    (r"(asked|requested|sought) unanimous consent", "debate", "Consent request",
+     "A senator asked to pass or schedule something without a vote; it goes through only if nobody objects."),
     (r"filed cloture", "schedule", "Cloture filed",
      "Sets up a test vote to end debate, by rule two days later unless they agree to go sooner."),
     (r"\bwill (convene|vote|resume|recess|proceed)|votes? (are|is) expected|roll ?call votes? (are )?expected|"
@@ -456,6 +460,148 @@ def senate_time_from_text(text: str, day: dt.date) -> dt.datetime | None:
     return dt.datetime(day.year, day.month, day.day, h, mi, tzinfo=EASTERN)
 
 
+# --------------------------------------------------------------------------
+# More Senate context: Daily Press Gallery log, party floor staff, committees
+# --------------------------------------------------------------------------
+DAILYPRESS_URL = "https://www.dailypress.senate.gov/"
+DEMS_FEED_URL = "https://www.democrats.senate.gov/feed"
+CLOAKROOM_URL = ("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
+                 "?actor=senatecloakroom.bsky.social&limit=40&filter=posts_no_replies")
+HEARINGS_URL = "https://www.senate.gov/general/committee_schedules/hearings.xml"
+SRC_DP = "Senate Daily Press Gallery"
+SRC_DEMS = "Senate Democrats (party floor staff)"
+SRC_GOP = "Senate Republican Cloakroom (party floor staff)"
+TIME_LEAD = re.compile(r"^(\d{1,2}):(\d{2})\s*([ap])\.?\s?m\.?\s*[:\-–]?\s*(.*)$", re.I)
+
+
+def parse_dailypress(html_bytes: bytes) -> tuple[str | None, list[dict], list[str]]:
+    """Newest day on the page -> (day, timed/wrap-up entries in page order, schedule lines)."""
+    p = _LogParser()
+    p.feed(html_bytes.decode("utf-8", "replace"))
+    day, entries, sched, section = None, [], [], "top"
+    for tag, text in p.blocks:
+        m = DATE_HEAD.match(text)
+        if m:
+            if day is not None and (entries or sched):
+                break
+            day = dt.datetime.strptime(m.group(2), "%B %d, %Y").date()
+            section = "top"
+            continue
+        if day is None or SENATE_NOISE.search(text) or text.lower().startswith("senate floor archives"):
+            continue
+        if re.fullmatch(r"[*\s]{3,}", text):
+            section = "schedule"
+            continue
+        if re.match(r"^during wrap[- ]?up:?$", text, re.I):
+            section = "wrapup"
+            continue
+        tm = TIME_LEAD.match(text)
+        if tm and section != "schedule":
+            h, mi = int(tm.group(1)) % 12, int(tm.group(2))
+            if tm.group(3).lower() == "p":
+                h += 12
+            entries.append({"time": (h, mi), "text": norm(tm.group(4)), "details": []})
+            section = "log"
+            continue
+        if len(text) < 6 or re.fullmatch(r"[A-Z][a-z]{2}(Mon|Tue|Wed|Thu|Fri|Sat|Sun)?.*\d{4}", text):
+            continue
+        if section == "wrapup":
+            entries.append({"time": None, "wrap": True, "text": text, "details": []})
+        elif section == "log" and entries:
+            entries[-1]["details"].append(text)
+        else:
+            sched.append(text)
+    return (day.isoformat() if day else None), entries, sched
+
+
+def html_lines(fragment: str) -> list[str]:
+    p = _LogParser()
+    p.feed(fragment or "")
+    out = []
+    for _, t in p.blocks:
+        t = norm(t.replace("\xa0", " "))
+        if t and t not in out:
+            out.append(t)
+    return out
+
+
+def parse_dems_feed(rss: bytes) -> list[dict]:
+    out = []
+    try:
+        root = ET.fromstring(rss)
+    except ET.ParseError:
+        return out
+    for it in root.iter("item"):
+        title = norm(it.findtext("title") or "")
+        m = re.search(r"(?:for|for the week of)\s+(?:[A-Za-z]+,\s+)?([A-Z][a-z]+ \d{1,2}, \d{4})", title)
+        try:
+            day = dt.datetime.strptime(m.group(1), "%B %d, %Y").date().isoformat() if m else None
+        except ValueError:
+            day = None
+        pub = None
+        try:
+            pub = dt.datetime.strptime(norm(it.findtext("pubDate") or "")[:25].strip(), "%a, %d %b %Y %H:%M:%S")
+            pub = pub.replace(tzinfo=EASTERN).isoformat()
+        except ValueError:
+            pass
+        kind = "wrapup" if title.lower().startswith("wrap up") else "schedule" if title.lower().startswith("schedule") else ""
+        out.append({"title": title, "day": day, "kind": kind, "pub": pub, "link": norm(it.findtext("link") or ""),
+                    "lines": html_lines(it.findtext("description") or "")})
+    return out
+
+
+def parse_cloakroom(js: bytes) -> list[dict]:
+    try:
+        data = json.loads(js)
+    except Exception:
+        return []
+    out = []
+    for f in data.get("feed", []):
+        post = f.get("post", {})
+        rec = post.get("record", {})
+        text, created = norm(rec.get("text", "")), rec.get("createdAt", "")
+        if not text or f.get("reason"):  # skip reposts
+            continue
+        try:
+            ts = dt.datetime.fromisoformat(created.replace("Z", "+00:00")).astimezone(EASTERN)
+        except ValueError:
+            continue
+        rkey = post.get("uri", "").rsplit("/", 1)[-1]
+        out.append({"ts": ts.isoformat(), "text": text, "id": rkey,
+                    "url": f"https://bsky.app/profile/senatecloakroom.bsky.social/post/{rkey}"})
+    return out
+
+
+def parse_hearings(xml_bytes: bytes, today: dt.date, days: int = 7) -> list[dict]:
+    try:
+        root = ET.fromstring(xml_bytes)
+    except ET.ParseError:
+        return []
+    out = []
+    for m in root.iter("meeting"):
+        g = lambda t: norm(m.findtext(t) or "")
+        try:
+            d = dt.datetime.strptime(g("date"), "%d-%b-%Y").date()
+        except ValueError:
+            continue
+        if not (today <= d <= today + dt.timedelta(days=days)):
+            continue
+        docs = []
+        for a in m.iter("AssociatedDocument"):
+            pre, num = a.get("document_prefix", ""), a.get("document_num", "")
+            if pre and num:
+                docs.append(f"{pre} {num}")
+        matter = g("matter")
+        out.append({"id": g("identifier"), "day": d.isoformat(), "time": g("time"), "committee": g("committee"),
+                    "type": g("type"), "room": g("room"), "matter": matter, "docs": docs,
+                    "refs": bill_refs(" ".join(docs) + " " + matter), "video": g("video_url"),
+                    "nomination": bool(re.search(r"nominat", matter, re.I)),
+                    "markup": bool(re.search(r"business meeting|markup|mark-up", matter + " " + g("type"), re.I))})
+    out.sort(key=lambda x: (x["day"], dt.datetime.strptime(x["time"], "%I:%M %p").time() if re.match(r"\d", x["time"]) else dt.time(0)))
+    return out
+
+
+
 def parse_senate_menu(xml_bytes: bytes) -> list[dict]:
     root = ET.fromstring(xml_bytes)
     year = int(root.findtext("congress_year") or now_et().year)
@@ -652,6 +798,7 @@ class Engine:
                             or (carry and re.match(r"^(Motion|Adoption|Passage|Confirmation|Cloture)", t)):
                         carry.append(t)
                 self.carryover = [{"day": prior[-1], "text": t} for t in carry]
+                self.carry_source = "previous day's Senate press gallery log"
             else:
                 self.carryover = []
             first_poll = self.state.setdefault("senate_first_poll", {})
@@ -678,6 +825,46 @@ class Engine:
                 it.update(classify("senate", e["text"]))
                 mark_pending(it)
                 items.append(it)
+
+        # The Daily Press Gallery log is timestamped and more complete: prefer it when it's current.
+        dp_sched: list[str] = []
+        dp_store = self.state.setdefault("dp_log", {})
+        dp_data = self.f.get(DAILYPRESS_URL, ttl=45)
+        if dp_data:
+            try:
+                dday, dentries, dsched = parse_dailypress(dp_data)
+            except Exception:
+                dday, dentries, dsched = None, [], []
+            if dday and dentries:
+                dp_store[dday] = {"entries": dentries, "sched": dsched}
+        for old in sorted(dp_store)[:-5]:
+            del dp_store[old]
+        if dp_store and (not log_day or max(dp_store) >= log_day):
+            dday = max(dp_store)
+            d = dt.date.fromisoformat(dday)
+            dentries, dp_sched = dp_store[dday]["entries"], dp_store[dday]["sched"]
+            items, last_ts = [], None
+            for i, e in enumerate(dentries):
+                if e["time"]:
+                    ts = dt.datetime(d.year, d.month, d.day, *e["time"], tzinfo=EASTERN)
+                    last_ts = ts
+                else:  # wrap-up lines: just before the timed entry above them
+                    nxt = next((x for x in dentries[i:] if x["time"]), None)
+                    base = last_ts or (dt.datetime(d.year, d.month, d.day, *nxt["time"], tzinfo=EASTERN) if nxt
+                                       else dt.datetime(d.year, d.month, d.day, 18, tzinfo=EASTERN))
+                    ts = base - dt.timedelta(seconds=30 + i)
+                key = f"s-dp-{dday}-" + hashlib.sha1(e["text"].encode()).hexdigest()[:10]
+                it = {"id": key, "chamber": "senate", "ts": ts.isoformat(), "text": e["text"], "source": SRC_DP,
+                      "notes": e["details"], "refs": bill_refs(e["text"]), "vote": vote_outcome(e["text"])}
+                it.update(classify("senate", e["text"]))
+                if e.get("wrap"):
+                    it["wrap"] = True
+                    if it["kind"] in ("routine", "info", "schedule"):
+                        it.update({"kind": "info", "badge": KINDS["info"], "label": "Wrap-up"})
+                    it["explain"] = (it["explain"] + " Done during the end-of-day wrap-up, usually by unanimous consent.").strip()
+                mark_pending(it)
+                items.append(it)
+            log_day = dday
 
         # Roll-call votes for the whole session (one file), detail for recent ones.
         votes = []
@@ -733,26 +920,126 @@ class Engine:
                     items.append(row)
             log_day = show_day
         self.state_path.write_text(json.dumps(self.state))
-        tallies = {(r["ts"][:10], r["vote"]["yeas"], r["vote"]["nays"]) for r in votes}
-        items = [i for i in items if i.get("is_roll") or not (
-            i.get("vote") and (i["ts"][:10], i["vote"].get("yeas"), i["vote"].get("nays")) in tallies)]
-        done_text = " ".join((i.get("text", "") + " " + ((i.get("vote") or {}).get("question") or "")).lower()
-                             for i in items if i.get("vote"))
+        by_tally = {(r["ts"][:10], r["vote"]["yeas"], r["vote"]["nays"]): r for r in votes}
+        kept = []
+        for i in items:
+            key = (i["ts"][:10], (i.get("vote") or {}).get("yeas"), (i.get("vote") or {}).get("nays"))
+            if not i.get("is_roll") and i.get("vote") and key in by_tally:
+                roll = by_tally[key]
+                if i.get("notes"):
+                    roll["notes"] = i["notes"]
+                if i.get("source") == SRC_DP and roll.get("approx", True):
+                    roll["ts"], roll["approx"] = i["ts"], False   # the press log has the real time
+                continue
+            kept.append(i)
+        items = kept
+        show = log_day or today.isoformat()
+        items += self.party_items(show, items, votes)
+        sched_lines = self.dem_schedule(show) or dp_sched
+        if sched_lines:
+            self.carryover = [{"day": show, "text": t} for t in sched_lines]
+            self.carry_source = SRC_DEMS if self.dem_schedule(show) else SRC_DP
+        done_items = [((i.get("text", "") + " " + ((i.get("vote") or {}).get("question") or "")).lower(),
+                       {canon(r) for r in i.get("refs", [])}) for i in items if i.get("vote")]
         steps = [("waive", r"waive"), ("adoption", r"adoption of|on the amendment|amdt"), ("cloture", r"cloture"),
                  ("passage", r"passage|on passage"), ("confirmation", r"confirm")]
         for i, e in enumerate(getattr(self, "carryover", [])):
             d = dt.date.fromisoformat(log_day) if log_day else today
             low = e["text"].lower()
-            done = any(k in low[:40] and re.search(p, done_text) for k, p in steps) and not low.startswith("at ")
+            line_refs = {canon(r) for r in bill_refs(e["text"])}
+            done = not low.startswith("at ") and any(
+                k in low[:40] and re.search(p, t) and (not line_refs or line_refs & refs)
+                for k, p in steps for t, refs in done_items)
             it = {"id": "s-carry-" + hashlib.sha1(e["text"].encode()).hexdigest()[:10], "chamber": "senate",
                   "ts": dt.datetime(d.year, d.month, d.day, 0, 0, i, tzinfo=EASTERN).isoformat(),
                   "approx": True, "carry": True, "done": done, "text": e["text"], "refs": bill_refs(e["text"]), "vote": None,
                   "kind": "schedule", "badge": KINDS["schedule"], "label": "Expected today",
-                  "explain": "From the end of the previous day's Senate log."}
+                  "explain": "", "source": getattr(self, "carry_source", "Senate press gallery log")}
             items.append(it)
         items.sort(key=lambda x: x["ts"], reverse=True)
         return items, votes, log_day
 
+
+
+    # ---- Party floor staff + committees -----------------------------------
+    def _dems(self) -> list[dict]:
+        if not hasattr(self, "_dems_cache"):
+            data = self.f.get(DEMS_FEED_URL, ttl=240)
+            self.f.errors.pop(DEMS_FEED_URL, None)
+            self._dems_cache = parse_dems_feed(data) if data else []
+        return self._dems_cache
+
+    def dem_schedule(self, day: str) -> list[str]:
+        for it in self._dems():
+            if it["kind"] == "schedule" and it["day"] == day:
+                lines = [l for l in it["lines"] if not re.match(r"^(schedule for|senate schedule)", l, re.I)]
+                return lines[:25]
+        return []
+
+    def party_items(self, day: str, existing: list[dict], votes: list[dict]) -> list[dict]:
+        out = []
+        tallies = {(r["ts"][:10], r["vote"]["yeas"], r["vote"]["nays"]) for r in votes}
+        tallies |= {(i["ts"][:10], i["vote"].get("yeas"), i["vote"].get("nays")) for i in existing
+                    if i.get("vote") and i["vote"].get("yeas") is not None}
+        seen_text = " ".join(i.get("text", "") + " " + " ".join(i.get("notes", [])) for i in existing).lower()
+        seen_refs = {canon(r) for i in existing for r in bill_refs(i.get("text", ""))}
+        seen_cal = set(re.findall(r"#\s?(\d+)", seen_text))
+
+        def covered(text):
+            refs = {canon(r) for r in bill_refs(text)}
+            cals = set(re.findall(r"#\s?(\d+)", text))
+            return (refs and refs <= seen_refs) or (cals and cals <= seen_cal) or text.lower()[:60] in seen_text
+
+        # Senate Democrats' end-of-day wrap-up: voice votes and consent agreements
+        for it in self._dems():
+            if it["kind"] != "wrapup" or it["day"] != day:
+                continue
+            section = ""
+            for i, line in enumerate(it["lines"]):
+                low = line.lower()
+                if len(line) < 40 and not bill_refs(line) and not re.search(r"\d", line):
+                    section = low
+                    continue
+                if "roll call" in section or low.startswith("wrap up for"):
+                    continue
+                v = vote_outcome(line)
+                if v and (day, v.get("yeas"), v.get("nays")) in tallies:
+                    continue
+                if covered(line):
+                    continue
+                row = {"id": "s-dem-" + hashlib.sha1(line.encode()).hexdigest()[:10], "chamber": "senate",
+                       "ts": (dt.datetime.fromisoformat(it["pub"]) - dt.timedelta(seconds=i)).isoformat() if it["pub"]
+                       else f"{day}T18:00:00-05:00", "approx": True, "text": line, "source": SRC_DEMS,
+                       "link": it["link"], "refs": bill_refs(line), "vote": v, "wrap": True}
+                row.update(classify("senate", line + " " + section))
+                row["explain"] = (row["explain"] + " Done during the end-of-day wrap-up, usually by unanimous consent.").strip()
+                if row["kind"] in ("routine", "info"):
+                    row.update({"kind": "info", "badge": KINDS["info"], "label": "Wrap-up"})
+                mark_pending(row)
+                out.append(row)
+
+        # Republican cloakroom posts on Bluesky
+        data = self.f.get(CLOAKROOM_URL, ttl=90)
+        self.f.errors.pop(CLOAKROOM_URL, None)
+        for p in (parse_cloakroom(data) if data else []):
+            if p["ts"][:10] != day:
+                continue
+            v = vote_outcome(p["text"])
+            if v and (day, v.get("yeas"), v.get("nays")) in tallies:
+                continue
+            if covered(p["text"]):
+                continue
+            row = {"id": "s-gop-" + p["id"], "chamber": "senate", "ts": p["ts"], "text": p["text"],
+                   "source": SRC_GOP, "link": p["url"], "refs": bill_refs(p["text"]), "vote": v}
+            row.update(classify("senate", p["text"]))
+            mark_pending(row)
+            out.append(row)
+        return out
+
+    def committees(self) -> list[dict]:
+        today = self.fixed_date or now_et().date()
+        data = self.f.get(HEARINGS_URL, ttl=1800)
+        return parse_hearings(data, today) if data else []
 
     # ---- Bills ------------------------------------------------------------
     def build_bills(self, items: list[dict]) -> dict:
@@ -908,7 +1195,9 @@ class Engine:
         if re.search(r"\badjourn(ed)?\b", low) and "motion to adjourn" not in low:
             sched = next((i for i in items if i["kind"] == "schedule"), None)
             return {"text": "Adjourned. " + (sched["text"] if sched else latest["text"]), "kind": "routine"}
-        for it in items[:15]:
+        for it in items[:25]:
+            if it.get("wrap") or "party floor staff" in it.get("source", ""):
+                continue
             if it["kind"] in ("debate", "final", "procedural", "amendment"):
                 return {"text": it["text"], "kind": it["kind"], "label": it["label"], "explain": it["explain"],
                         "about": it.get("about", ""), "ts": it["ts"], "bill_keys": it.get("bill_keys", []),
@@ -923,6 +1212,8 @@ class Engine:
             traceback.print_exc()
             house, h_day = self.feed.get("house", []), None
         try:
+            if hasattr(self, "_dems_cache"):
+                del self._dems_cache
             senate, s_votes, s_day = self.senate()
         except Exception:
             traceback.print_exc()
@@ -937,6 +1228,11 @@ class Engine:
                     it["title"] = t
                     break
 
+        try:
+            committees = self.committees()
+        except Exception:
+            traceback.print_exc()
+            committees = []
         house_votes = [dict(i, is_roll=True) for i in house if i.get("vote") and i["vote"].get("roll")]
         votes = sorted(house_votes + s_votes, key=lambda x: x["ts"], reverse=True)
         try:
@@ -955,7 +1251,8 @@ class Engine:
             "now": {"house": self.now_line(h_feed), "senate": self.now_line(s_feed)},
         }
         with self.lock:
-            self.feed = {"house": h_feed, "senate": s_feed, "votes": votes, "bills": bill_index, "status": status}
+            self.feed = {"house": h_feed, "senate": s_feed, "votes": votes, "bills": bill_index,
+                         "committees": committees, "status": status}
 
     def loop(self, every: int):
         while True:
@@ -981,7 +1278,7 @@ STAGE = {"IntroReferral": ("INTRODUCED", "Introduced / sent to committee"),
          "President": ("PRESIDENT", "President"),
          "BecameLaw": ("LAW", "Became law")}
 SLIM = ("id", "chamber", "ts", "approx", "text", "kind", "badge", "label", "explain", "vote", "title",
-        "refs", "about", "pending", "is_roll", "dateonly", "source")
+        "refs", "about", "pending", "is_roll", "dateonly", "source", "notes", "link", "wrap")
 
 
 def bill_display(canon_ref: str) -> str:

@@ -144,6 +144,14 @@ details.box summary h3::after{content:" ▸"} details.box[open] summary h3::afte
 .dayhead{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);margin:16px 0 6px;text-transform:uppercase}
 
 /* ---- live feed: typographic timeline ---- */
+.via{font-size:11.5px;color:var(--muted);margin-top:2px}
+.cmte{margin:0 0 16px;font-size:13.5px}
+.cmte summary{cursor:pointer;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 6px 88px}
+.cm-day{font-size:11px;font-weight:700;color:var(--muted);margin:8px 0 2px 88px}
+.cm{display:grid;grid-template-columns:68px 20px 1fr;margin-bottom:6px}
+.cm .cm-t{font-size:11.5px;color:var(--muted);text-align:right;padding-right:8px;white-space:nowrap}
+.cm>div{grid-column:3} .cm-m{color:var(--muted);font-size:13px;line-height:1.35}
+.cm .tag{font-size:9.5px;font-weight:800;letter-spacing:.06em;padding:1px 5px;border-radius:4px;margin-left:6px}
 .hero{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:4px 0 18px}
 .hero-c{border-top:3px solid var(--house);padding-top:10px}
 .hero-c.senate{border-top-color:var(--senate)}
@@ -203,7 +211,7 @@ details.box summary h3::after{content:" ▸"} details.box[open] summary h3::afte
 .expect li{margin:2px 0;color:var(--ink)} .expect li.done{color:var(--muted);text-decoration:line-through}
 .expect ul{margin:0;padding-left:18px}
 .foot{font-size:12px;color:var(--muted);margin-top:30px;border-top:1px solid var(--line);padding-top:10px}
-@media (max-width:900px){.hero{grid-template-columns:1fr;gap:16px}.hero-s{font-size:20px}.expect{margin-left:0}
+@media (max-width:900px){.cmte summary,.cm-day{margin-left:0}.cm{grid-template-columns:52px 6px 1fr}.hero{grid-template-columns:1fr;gap:16px}.hero-s{font-size:20px}.expect{margin-left:0}
   .ev,.gap,.story-h{grid-template-columns:60px 18px minmax(0,1fr)}.ev-t{font-size:10.5px;padding-right:5px}}
 @media (max-width:900px){.cols,.now,.bv-grid,.bv-layout{grid-template-columns:1fr}.hide-sm{display:none}
   .bv-side{position:static;max-height:none;order:-1} .tl-line .badge,.tl-ch{display:none}.tl-row,.tl-gap{grid-template-columns:58px 22px minmax(0,1fr)}}
@@ -320,6 +328,9 @@ const billOf = it => { if(it.about){ const k = it.about.replace(/[^A-Za-z0-9]/g,
   return (it.bill_keys||[]).find(k=>!k.startsWith("HRES")) || (it.bill_keys||[])[0] || null; };
 const bname = k => { const b = k && (S.data.bills||{})[k]; return b ? (b.name || b.ref) : ""; };
 function headline(it){
+  if(it.wrap) return esc(it.text.length > 150 ? it.text.slice(0,150)+"…" : it.text) + `<span class="tag b-routine">WRAP-UP · NO ROLL CALL</span>`;
+  if(it.label==="Consent request blocked" || it.label==="Consent request") return `${esc(it.label)}: <span style="font-weight:400">${esc(it.text)}</span>`;
+  if(it.source && /party floor staff/.test(it.source) && !(it.vote && (it.vote.yeas||it.vote.nays))) return esc(it.text);
   const v = it.vote, r = v && v.result, ok = passed(r), L = it.label || "";
   const has = v && (v.yeas || v.nays || r);
   const R = (y, n) => ok ? `<span class="ok">${y}</span>` : `<span class="no">${n}</span>`;
@@ -352,6 +363,7 @@ function headline(it){
   return esc(map2[L] || L);
 }
 const tierOf = it => { const v = it.vote, has = v && (v.yeas||v.nays||v.result);
+  if(it.wrap) return /^(routine|info)$/.test(it.kind) && !/^(passed|adopted|confirmed|agreed)/i.test(it.text) ? 5 : 3;
   if(it.kind==="final" && has) return 1;
   if((it.kind==="procedural"||it.kind==="amendment"||it.kind==="final") && has) return it.label==="Housekeeping" ? 5 : 2;
   if(it.kind==="schedule") return 4;
@@ -376,7 +388,9 @@ function evHtml(it, inStory){
     <div class="ev-t">${it.approx&&!it.is_roll?"~":""}${fmtTime(it.ts)}</div><div class="ev-r"><span class="ev-d"></span></div>
     <div class="ev-c"><div class="hl">${it.hlOverride || headline(it)}${t<=2?tagFor(it):""}</div>${t<=2?tallyLine(v):""}${why}
       ${chipLine}
-      <div class="det">${(it.texts||[it.text]).map(esc).join("<br>")}${t>2&&v?tallyLine(v):""}</div></div></div>`;
+      ${it.source && /party floor staff/.test(it.source) ? `<div class="via">via ${esc(it.source)}</div>` : ""}
+      <div class="det">${(it.texts||[it.text]).map(esc).join("<br>")}${(it.notes||[]).length?`<div style="margin-top:4px">${it.notes.map(esc).join("<br>")}</div>`:""}${t>2&&v?tallyLine(v):""}
+        <div class="via">Source: ${esc(it.source || (it.chamber==="house" ? "House Clerk" : it.is_roll ? "senate.gov roll call" : "Senate Periodical Press Gallery"))}${it.link?` · <a href="${esc(it.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">original ↗</a>`:""}</div></div></div></div>`;
 }
 function gapHtml(h){
   const px = Math.round(Math.min(110, 16 * Math.pow(h, 0.85)));
@@ -446,6 +460,23 @@ function renderNow(){
   $("#now").className = "hero"; $("#now").innerHTML = out.join("");
   $("#now").style.gridTemplateColumns = S.ch==="both" ? "" : "1fr";
 }
+function committeesHtml(){
+  const all = S.data.committees || [];
+  if(!all.length) return "";
+  const today = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
+  const days = [...new Set(all.map(m=>m.day))];
+  const first = days.includes(today) ? today : days[0];
+  const shown = S.allCmte ? all : all.filter(m=>m.day===first);
+  let lastDay = "";
+  const rows = shown.map(m => { const head = m.day!==lastDay ? `<div class="cm-day">${m.day===today?"Today":new Date(m.day+"T12:00").toLocaleDateString([], {weekday:"long", month:"short", day:"numeric"})}</div>` : ""; lastDay = m.day;
+    const keys = (m.refs||[]).map(r=>r.replace(/[^A-Za-z0-9]/g,"").toUpperCase()).filter(k=>(S.data.bills||{})[k]);
+    return head + `<div class="cm"><span class="cm-t">${esc(m.time.replace(/^0/,""))}</span><div><b>${esc(m.committee)}</b>
+      ${m.nomination?`<span class="tag b-schedule">NOMINEES</span>`:""}${m.markup?`<span class="tag b-amendment">VOTING ON BILLS</span>`:""}
+      <div class="cm-m">${esc(m.matter.length>170?m.matter.slice(0,170)+"…":m.matter)} <span class="src">${esc(m.room)}</span></div>${keys.length?chips(keys):""}</div></div>`; }).join("");
+  const label = first===today ? "In Senate committees today" : "Next in Senate committees";
+  return `<details class="cmte" ${S.cmteOpen===false?"":"open"} ontoggle="S.cmteOpen=this.open"><summary>${label} · ${shown.length}</summary>${rows}
+    ${all.length > shown.length || S.allCmte ? `<button class="chip" style="margin:6px 0 0 70px" onclick="S.allCmte=!S.allCmte;render()">${S.allCmte?"Show fewer":`Show the next 7 days (${all.length})`}</button>`:""}</details>`;
+}
 function renderFeed(){
   const d = S.data, chs = S.ch==="both" ? ["house","senate"] : [S.ch];
   const cols = chs.map(ch => {
@@ -453,9 +484,10 @@ function renderFeed(){
     const carry = all.filter(i=>i.carry);
     const list = all.filter(i=>!i.carry).filter(keep);
     const hidden = all.length - carry.length - list.length;
-    const exp = carry.length && !S.votesOnly ? `<div class="expect"><h4>Expected today (from last night's Senate log)</h4><ul>${carry.slice().reverse().map(c=>`<li class="${c.done?"done":""}">${esc(c.text)}</li>`).join("")}</ul></div>` : "";
+    const src = carry.length ? (carry[0].source||"").replace(/ \(party floor staff\)/," (party staff)") : "";
+    const exp = carry.length && !S.votesOnly ? `<div class="expect"><h4>Expected today · from ${esc(src)}</h4><ul>${carry.slice().reverse().map(c=>`<li class="${c.done?"done":""}">${esc(c.text)}</li>`).join("")}</ul></div>` : "";
     return `<div class="fcol"><h2><b>${ch==="house"?"House":"Senate"}</b> ${list.length} events${hidden?` · ${hidden} routine hidden`:""}</h2>
-      ${exp}${list.length ? feedHtml(list) : `<div class="empty">Nothing to show${hidden?" with these filters":""}.</div>`}</div>`;
+      ${exp}${ch==="senate" && !S.votesOnly ? committeesHtml() : ""}${list.length ? feedHtml(list) : `<div class="empty">Nothing to show${hidden?" with these filters":""}.</div>`}</div>`;
   });
   $("#feedView").innerHTML = `<div class="cols" style="gap:34px;${chs.length===1?"grid-template-columns:1fr":""}">${cols.join("")}</div>`;
 }
@@ -611,7 +643,7 @@ function renderStatus(){
   $("#updated").textContent = (fresh?"Live · ":"Stale · ") + "updated " + fmtTime(st.updated);
   const errs = (st.errors||[]).map(([u,e])=>`<span class="err">Couldn't reach ${esc(new URL(u).host)} (${esc(e)})</span>`);
   $("#status").innerHTML = errs.join(" · ");
-  $("#foot").innerHTML = `Sources: House Clerk, Senate Periodical Press Gallery, senate.gov roll calls, GovInfo. Updated every minute or two on weekdays.
+  $("#foot").innerHTML = `Sources: House Clerk; senate.gov roll calls and committee schedule; Senate Daily and Periodical Press Galleries; Senate Democrats' and the Senate Republican Cloakroom's floor staff (marked "via" when shown); GovInfo. Updated every minute or two on weekdays.
     Explanations are written by FloorWatch's own rules: no AI, no API keys, free.`;
 }
 function render(){

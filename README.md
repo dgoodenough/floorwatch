@@ -45,6 +45,9 @@ Options:
 - **Senate floor log**: `periodicalpress.senate.gov/on-the-floor`, the Periodical Press Gallery's running log. It has no timestamps, so those entries show a `~` and an approximate time.
 - **Bill names and history**: GovInfo's public BILLSTATUS XML (`govinfo.gov/bulkdata/BILLSTATUS/...`), refreshed every 3 hours per bill
 - **News**: a Google News search on the bill number and short title, for bills active in the last two weeks
+- **Senate Daily Press Gallery log** (`dailypress.senate.gov`): timestamped floor log with wrap-up business (voice votes, unanimous consent). Used in place of the Periodical Press Gallery log when it's current.
+- **Senate party floor staff**: Senate Democrats' daily schedule and wrap-up (`democrats.senate.gov/feed`) and the Senate Republican Cloakroom's Bluesky posts. These are labeled "via" on the page, and only facts not already covered by an official source are added.
+- **Senate committee schedule**: `senate.gov/general/committee_schedules/hearings.xml`
 - **Senate roll calls**: the `senate.gov` session vote list and per-vote XML, for the exact time, 60-vote thresholds and the party split
 
 ## Notes
