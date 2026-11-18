@@ -790,11 +790,19 @@ class Engine:
             show_day = max([d for d in (log_day, max(vote_days, default=None)) if d], default=today.isoformat())
             if log_day and show_day > log_day:
                 items = []  # the log hasn't caught up to today's votes yet
+            # Votes whose detail file hasn't come through yet get slotted just after the previous vote.
+            known = {v["num"]: detail[v["num"]]["ts"] for v in menu_votes if detail.get(v["num"], {}).get("ts")}
+            for v in sorted(menu_votes, key=lambda x: x["num"]):
+                if v["num"] not in known:
+                    prev = [known[n] for n in known if n < v["num"] and known[n][:10] == v["day"]]
+                    if prev:
+                        t = dt.datetime.fromisoformat(max(prev)) + dt.timedelta(minutes=1)
+                        detail.setdefault(v["num"], {})["ts_guess"] = t.isoformat()
             for v in menu_votes:
                 det = detail.get(v["num"], {})
                 text = v["title"] or v["question"]
                 cls = classify("senate", f"{v['question']} {v['issue']}", det.get("question_text", ""))
-                ts = det.get("ts") or f"{v['day']}T12:00:{v['num'] % 60:02d}-05:00"
+                ts = det.get("ts") or det.get("ts_guess") or f"{v['day']}T12:00:{v['num'] % 60:02d}-05:00"
                 vote = {"result": v["result"], "yeas": v["yeas"], "nays": v["nays"], "num": v["num"],
                         "question": v["question"], "title": v["title"], "measure": v["issue"],
                         "party": det.get("party", {}), "majority": det.get("majority", ""),
