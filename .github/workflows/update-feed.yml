@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: update-feed
@@ -51,5 +52,20 @@ jobs:
           for i in 1 2 3 4; do
             python floorwatch.py --once --data data/state --out data || true
             [ -f data/feed.json ] && publish
-            [ "$i" -lt 4 ] && sleep 55
+            if [ "$i" -lt 4 ]; then sleep 55; fi
           done
+
+      # GitHub's 5-minute schedule is often late, so while Congress is likely in session
+      # (weekdays 8am-midnight Eastern) each run starts the next one right away.
+      # Outside those hours the schedule alone keeps it going.
+      - name: Start the next run
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dow=$(TZ=America/New_York date +%u); hour=$(TZ=America/New_York date +%H)
+          if [ "$dow" -le 5 ] && [ "$hour" -ge 8 ]; then
+            gh workflow run update-feed.yml --ref main -R "$GITHUB_REPOSITORY" || true
+          else
+            echo "Off-hours: leaving it to the schedule."
+          fi
