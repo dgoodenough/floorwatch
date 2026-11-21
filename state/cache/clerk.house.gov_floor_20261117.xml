@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<legislative_activity>
+<legislative_header>CURRENT HOUSE FLOOR PROCEEDINGS</legislative_header>
+<legislative_day date="20261117" previous-legislative-day-convened="20261113T10:00:00">LEGISLATIVE DAY OF NOVEMBER 17, 2026 </legislative_day>
+<legislative_congress congress="119" session="2"> 119TH CONGRESS - SECOND SESSION </legislative_congress>
+<language>en-us</language>
+<copyright>Pursuant to Title 17 Section 105 of the United States Code, this file is not subject to copyright protection and is in the public domain.</copyright>
+<pubDate>Wed, 18 Nov 2026 09:45:01 EST</pubDate>
+<floor_actions>
+<legislative_day_finished next-legislative-day-convenes="20261118T10:00">Yes</legislative_day_finished>
+<floor_action act-id="H61000" update-date-time="20261117T19:25" unique-id="46671">
+<action_time for-search="20261117T19:24:50">7:24:50 P.M. -</action_time>
+<action_description>
+The House adjourned. The next meeting is scheduled for 10:00 a.m. on November 18, 2026.
+</action_description>
+</floor_action>
+<floor_action act-id="H60100" update-date-time="20261117T19:25" unique-id="46670">
+<action_time for-search="20261117T19:24:49">7:24:49 P.M. -</action_time>
+<action_description>
+On motion to adjourn Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H60000" update-date-time="20261117T19:25" unique-id="46669">
+<action_time for-search="20261117T19:24:41">7:24:41 P.M. -</action_time>
+<action_description>
+Ms. McClellan moved that the House do now adjourn.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T19:11" unique-id="46668">
+<action_time for-search="20261117T19:09:49">7:09:49 P.M. -</action_time>
+<action_description>
+ONE MINUTE SPEECHES - The House proceeded with further one minute speeches.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T19:09" unique-id="46667">
+<action_time for-search="20261117T19:08:44">7:08:44 P.M. -</action_time>
+<action_description>
+MOMENT OF SILENCE - The House observed a moment of silence in remembrance of the Honorable Jim McDermott.
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T19:05" unique-id="46666">
+<action_time for-search="20261117T19:05:38">7:05:38 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T19:17" unique-id="46665">
+<action_time for-search="20261117T19:05:36">7:05:36 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill Agreed to by the Yeas and Nays: (2/3 required): 365 - 36 <a rel="vote" href="http://clerk.house.gov/cgi-bin/vote.asp?year=2026&amp;rollnumber=325">(Roll no. 325)</a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T18:57" unique-id="46663">
+<action_time for-search="20261117T18:56:50">6:56:50 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+Considered as unfinished business. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9600">H.R. 9600</a> &#8212; "<b>To approve the location of a commemorative work for Thomas Paine, America's indispensable and unsung Founding Father</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T19:05" unique-id="46662">
+<action_time for-search="20261117T18:56:40">6:56:40 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T19:17" unique-id="46661">
+<action_time for-search="20261117T18:56:38">6:56:38 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill, as amended Agreed to by the Yeas and Nays: (2/3 required): 398 - 0 <a rel="vote" href="http://clerk.house.gov/cgi-bin/vote.asp?year=2026&amp;rollnumber=324">(Roll no. 324)</a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T18:31" unique-id="46653">
+<action_time for-search="20261117T18:30:46">6:30:46 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+Considered as unfinished business. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8483">H.R. 8483</a> &#8212; "<b>To take certain land in the State of California into trust for the benefit of the Barona Group of Capitan Grande Band of Mission Indians of the Barona Reservation, California, and for other purposes</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T18:30" unique-id="46652">
+<action_time for-search="20261117T18:30:13">6:30:13 P.M. -</action_time>
+<action_description>
+UNFINISHED BUSINESS - The Chair announced the unfinished business was the question on motions to suspend the rules, which had been debated earlier and on which further proceedings had been postponed.
+</action_description>
+</floor_action>
+<floor_action act-id="H20100" update-date-time="20261117T18:30" unique-id="46651">
+<action_time for-search="20261117T18:30:11">6:30:11 P.M. -</action_time>
+<action_description>
+The House convened, returning from a recess continuing the legislative day of November 17.
+</action_description>
+</floor_action>
+<floor_action act-id="H61000" update-date-time="20261117T17:30" unique-id="46643">
+<action_time for-search="20261117T17:28:58">5:28:58 P.M. -</action_time>
+<action_description>
+The Speaker announced that the House do now recess. The next meeting is scheduled for approximately 6:30 P.M. today.
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T17:30" unique-id="46640">
+<action_time for-search="20261117T17:28:40">5:28:40 P.M. -</action_time>
+<action_item>H.R. 9785</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T17:30" unique-id="46639">
+<action_time for-search="20261117T17:28:32">5:28:32 P.M. -</action_time>
+<action_item>H.R. 9785</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill, as amended Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T17:25" unique-id="46638">
+<action_time for-search="20261117T17:24:30">5:24:30 P.M. -</action_time>
+<action_item>H.R. 9785</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9785"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9785">H.R. 9785</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T17:25" unique-id="46637">
+<action_time for-search="20261117T17:24:27">5:24:27 P.M. -</action_time>
+<action_item>H.R. 9785</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T17:25" unique-id="46636">
+<action_time for-search="20261117T17:24:11">5:24:11 P.M. -</action_time>
+<action_item>H.R. 9785</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill, as amended. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9785">H.R. 9785</a> &#8212; "<b>To direct the Secretary of the Interior to conduct studies to determine the feasibility of constructing projects to supply municipal, rural, and industrial water in certain parts of the Missouri River basin, and for other purposes</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H41931" update-date-time="20261117T17:25" unique-id="46635">
+<action_time for-search="20261117T17:23:56">5:23:56 P.M. -</action_time>
+<action_item>H.R. 2400</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H41610" update-date-time="20261117T17:25" unique-id="46634">
+<action_time for-search="20261117T17:23:55">5:23:55 P.M. -</action_time>
+<action_item>H.R. 2400</action_item>
+<action_description>
+On motion that the House suspend the rules and agree to the Senate amendment Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T17:20" unique-id="46633">
+<action_time for-search="20261117T17:20:04">5:20:04 P.M. -</action_time>
+<action_item>H.R. 2400</action_item>
+<action_description>
+DEBATE - The House proceeded with 40 minutes of debate on the motion to suspend the rules and agree to the Senate amendment to <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/2400"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/2400">H.R. 2400</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H40140" update-date-time="20261117T17:20" unique-id="46632">
+<action_time for-search="20261117T17:19:50">5:19:50 P.M. -</action_time>
+<action_item>H.R. 2400</action_item>
+<action_description>
+Mr. Westerman moved that the House suspend the rules and agree to the Senate amendment.
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T17:20" unique-id="46631">
+<action_time for-search="20261117T17:19:21">5:19:21 P.M. -</action_time>
+<action_item>H.R. 9269</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T17:20" unique-id="46630">
+<action_time for-search="20261117T17:19:17">5:19:17 P.M. -</action_time>
+<action_item>H.R. 9269</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill, as amended Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T17:10" unique-id="46629">
+<action_time for-search="20261117T17:10:34">5:10:34 P.M. -</action_time>
+<action_item>H.R. 9269</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9269"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9269">H.R. 9269</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T17:10" unique-id="46628">
+<action_time for-search="20261117T17:10:31">5:10:31 P.M. -</action_time>
+<action_item>H.R. 9269</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T17:10" unique-id="46627">
+<action_time for-search="20261117T17:10:01">5:10:01 P.M. -</action_time>
+<action_item>H.R. 9269</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill, as amended. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9269">H.R. 9269</a> &#8212; "<b>To extend the authorization of the African American Civil Rights Network</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H37220" update-date-time="20261117T17:10" unique-id="46626">
+<action_time for-search="20261117T17:09:31">5:09:31 P.M. -</action_time>
+<action_item>H.R. 9640</action_item>
+<action_description>
+At the conclusion of debate, the Yeas and Nays were demanded and ordered. Pursuant to the provisions of clause 8, rule XX, the Chair announced that further proceedings on the motion would be postponed.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T16:55" unique-id="46624">
+<action_time for-search="20261117T16:54:46">4:54:46 P.M. -</action_time>
+<action_item>H.R. 9640</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9640"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9640">H.R. 9640</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T16:55" unique-id="46623">
+<action_time for-search="20261117T16:54:44">4:54:44 P.M. -</action_time>
+<action_item>H.R. 9640</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T16:55" unique-id="46622">
+<action_time for-search="20261117T16:54:30">4:54:30 P.M. -</action_time>
+<action_item>H.R. 9640</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill, as amended. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9640">H.R. 9640</a> &#8212; "<b>To amend the Infrastructure Investment and Jobs Act to reauthorize the Earth Mapping Resources Initiative, and for other purposes</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T16:55" unique-id="46621">
+<action_time for-search="20261117T16:54:29">4:54:29 P.M. -</action_time>
+<action_item>H.R. 10136</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T16:55" unique-id="46620">
+<action_time for-search="20261117T16:54:20">4:54:20 P.M. -</action_time>
+<action_item>H.R. 10136</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill, as amended Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T16:46" unique-id="46617">
+<action_time for-search="20261117T16:45:35">4:45:35 P.M. -</action_time>
+<action_item>H.R. 10136</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/10136">H.R. 10136</a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T16:46" unique-id="46616">
+<action_time for-search="20261117T16:45:33">4:45:33 P.M. -</action_time>
+<action_item>H.R. 10136</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T16:46" unique-id="46615">
+<action_time for-search="20261117T16:45:10">4:45:10 P.M. -</action_time>
+<action_item>H.R. 10136</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill, as amended. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/10136">H.R. 10136</a> &#8212; "<b>To require the Secretary of Agriculture to convey the Crossett Experimental Forest to the State of Arkansas, and for other purposes</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H37220" update-date-time="20261117T16:46" unique-id="46614">
+<action_time for-search="20261117T16:44:40">4:44:40 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+At the conclusion of debate, the Yeas and Nays were demanded and ordered. Pursuant to the provisions of clause 8, rule XX, the Chair announced that further proceedings on the motion would be postponed.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T16:34" unique-id="46613">
+<action_time for-search="20261117T16:34:33">4:34:33 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9600"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9600">H.R. 9600</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T16:34" unique-id="46612">
+<action_time for-search="20261117T16:34:31">4:34:31 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T16:34" unique-id="46611">
+<action_time for-search="20261117T16:34:07">4:34:07 P.M. -</action_time>
+<action_item>H.R. 9600</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/9600">H.R. 9600</a> &#8212; "<b>To approve the location of a commemorative work for Thomas Paine, America's indispensable and unsung Founding Father</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H37220" update-date-time="20261117T16:34" unique-id="46610">
+<action_time for-search="20261117T16:33:52">4:33:52 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+At the conclusion of debate, the Yeas and Nays were demanded and ordered. Pursuant to the provisions of clause 8, rule XX, the Chair announced that further proceedings on the motion would be postponed.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T16:27" unique-id="46609">
+<action_time for-search="20261117T16:27:08">4:27:08 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8483"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8483">H.R. 8483</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T16:27" unique-id="46608">
+<action_time for-search="20261117T16:27:05">4:27:05 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T16:27" unique-id="46607">
+<action_time for-search="20261117T16:27:01">4:27:01 P.M. -</action_time>
+<action_item>H.R. 8483</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill, as amended. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8483">H.R. 8483</a> &#8212; "<b>To take certain land in the State of California into trust for the benefit of the Barona Group of Capitan Grande Band of Mission Indians of the Barona Reservation, California, and for other purposes</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T16:27" unique-id="46606">
+<action_time for-search="20261117T16:26:38">4:26:38 P.M. -</action_time>
+<action_item>H.R. 8195</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T16:27" unique-id="46605">
+<action_time for-search="20261117T16:26:18">4:26:18 P.M. -</action_time>
+<action_item>H.R. 8195</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill, as amended Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T16:17" unique-id="46604">
+<action_time for-search="20261117T16:17:21">4:17:21 P.M. -</action_time>
+<action_item>H.R. 8195</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8195"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8195">H.R. 8195</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T16:17" unique-id="46603">
+<action_time for-search="20261117T16:17:19">4:17:19 P.M. -</action_time>
+<action_item>H.R. 8195</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T16:17" unique-id="46602">
+<action_time for-search="20261117T16:17:04">4:17:04 P.M. -</action_time>
+<action_item>H.R. 8195</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill, as amended. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/8195">H.R. 8195</a> &#8212; "<b>To require the Secretary of the Interior to develop regional management frameworks for the take of double-crested cormorants</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H38310" update-date-time="20261117T16:17" unique-id="46601">
+<action_time for-search="20261117T16:17:03">4:17:03 P.M. -</action_time>
+<action_item>H.R. 7954</action_item>
+<action_description>
+Motion to reconsider laid on the table Agreed to without objection.
+</action_description>
+</floor_action>
+<floor_action act-id="H37300" update-date-time="20261117T16:17" unique-id="46600">
+<action_time for-search="20261117T16:16:43">4:16:43 P.M. -</action_time>
+<action_item>H.R. 7954</action_item>
+<action_description>
+On motion to suspend the rules and pass the bill Agreed to by voice vote.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T16:08" unique-id="46599">
+<action_time for-search="20261117T16:07:34">4:07:34 P.M. -</action_time>
+<action_item>H.R. 7954</action_item>
+<action_description>
+DEBATE - The House proceeded with forty minutes of debate on <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/7954"><a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/7954">H.R. 7954</a></a>.
+</action_description>
+</floor_action>
+<floor_action act-id="H30000" update-date-time="20261117T16:08" unique-id="46598">
+<action_time for-search="20261117T16:07:31">4:07:31 P.M. -</action_time>
+<action_item>H.R. 7954</action_item>
+<action_description>
+Considered under suspension of the rules.
+</action_description>
+</floor_action>
+<floor_action act-id="H30300" update-date-time="20261117T16:08" unique-id="46597">
+<action_time for-search="20261117T16:07:06">4:07:06 P.M. -</action_time>
+<action_item>H.R. 7954</action_item>
+<action_description>
+Mr. Westerman moved to suspend the rules and pass the bill. <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/7954">H.R. 7954</a> &#8212; "<b>To assist Tribal governments in the management of buffalo and buffalo habitat and the reestablishment of buffalo on Indian land</b>."
+</action_description>
+</floor_action>
+<floor_action act-id="H26200" update-date-time="20261117T16:07" unique-id="46596">
+<action_time for-search="20261117T16:06:43">4:06:43 P.M. -</action_time>
+<action_description>
+The Speaker announced that votes on suspensions, if ordered, will be postponed until a time to be announced.
+</action_description>
+</floor_action>
+<floor_action act-id="H20100" update-date-time="20261117T16:07" unique-id="46595">
+<action_time for-search="20261117T16:06:33">4:06:33 P.M. -</action_time>
+<action_description>
+The House convened, returning from a recess continuing the legislative day of November 17.
+</action_description>
+</floor_action>
+<floor_action act-id="H61000" update-date-time="20261117T14:18" unique-id="46585">
+<action_time for-search="20261117T14:12:47">2:12:47 P.M. -</action_time>
+<action_description>
+The Speaker announced that the House do now recess. The next meeting is subject to the call of the Chair.
+</action_description>
+</floor_action>
+<floor_action act-id="H24500" update-date-time="20261117T14:20" unique-id="46584">
+<action_time for-search="20261117T14:11:45">2:11:45 P.M. -</action_time>
+<action_description>
+The House received a message from the Clerk. Pursuant to the permission granted in Clause 2(h) of Rule II of the Rules of the U.S. House of Representatives, the Clerk notified the House that he had received the following message from the Secretary of the Senate on November 16, 2026, at 4:44 p.m.: That the Senate passed <a rel="bill" href="https://www.congress.gov/bill/119th-congress/senate-bill/432">S. 432</a>, <a rel="bill" href="https://www.congress.gov/bill/119th-congress/senate-bill/1353">S. 1353</a>, <a rel="bill" href="https://www.congress.gov/bill/119th-congress/senate-bill/2887">S. 2887</a>, <a rel="bill" href="https://www.congress.gov/bill/119th-congress/senate-bill/3493">S. 3493</a>, and <a rel="bill" href="https://www.congress.gov/bill/119th-congress/house-bill/2400">H.R. 2400</a> amended.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T14:04" unique-id="46583">
+<action_time for-search="20261117T14:04:26">2:04:26 P.M. -</action_time>
+<action_description>
+ONE MINUTE SPEECHES - The House proceeded with one minute speeches.
+</action_description>
+</floor_action>
+<floor_action act-id="H2C000" update-date-time="20261117T14:02" unique-id="46582">
+<action_time for-search="20261117T14:02:28">2:02:28 P.M. -</action_time>
+<action_description>
+PLEDGE OF ALLEGIANCE - The Chair designated Mr. Espaillat to lead the Members in reciting the Pledge of Allegiance to the Flag.
+</action_description>
+</floor_action>
+<floor_action act-id="H23100" update-date-time="20261117T14:02" unique-id="46581">
+<action_time for-search="20261117T14:02:25">2:02:25 P.M. -</action_time>
+<action_description>
+The Speaker announced approval of the Journal.  Pursuant to clause 1, rule I, the Journal stands approved.
+</action_description>
+</floor_action>
+<floor_action act-id="H21000" update-date-time="20261117T14:00" unique-id="46580">
+<action_time for-search="20261117T14:00:35">2:00:35 P.M. -</action_time>
+<action_description>
+Today's prayer was offered by Rabbi Ari Berman, Yeshiva University, New York, New York.
+</action_description>
+</floor_action>
+<floor_action act-id="H20100" update-date-time="20261117T14:00" unique-id="46579">
+<action_time for-search="20261117T14:00:00">2:00:00 P.M. -</action_time>
+<action_description>
+The House convened, returning from a recess continuing the legislative day of November 17.
+</action_description>
+</floor_action>
+<floor_action act-id="H61000" update-date-time="20261117T12:43" unique-id="46578">
+<action_time for-search="20261117T12:42:50">12:42:50 P.M. -</action_time>
+<action_description>
+The Speaker announced that the House do now recess. The next meeting is scheduled for 2:00 P.M. today.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T12:11" unique-id="46569">
+<action_time for-search="20261117T12:05:43">12:05:43 P.M. -</action_time>
+<action_description>
+MORNING-HOUR DEBATE - The House resumed with Morning-Hour Debate.
+</action_description>
+</floor_action>
+<floor_action act-id="H24300" update-date-time="20261117T12:11" unique-id="46570">
+<action_time for-search="20261117T12:05:05">12:05:05 P.M. -</action_time>
+<action_description>
+The House received a message from the Senate. The Senate passed S. 3296, H.R. 2302, and H.R. 7834.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261117T12:04" unique-id="46568">
+<action_time for-search="20261117T12:00:40">12:00:40 P.M. -</action_time>
+<action_description>
+MORNING-HOUR DEBATE - The House proceeded with Morning-Hour Debate. At the conclusion of Morning-Hour, the House will recess until 2:00 p.m. for the start of legislative business.
+</action_description>
+</floor_action>
+<floor_action act-id="H22000" update-date-time="20261117T12:04" unique-id="46567">
+<action_time for-search="20261117T12:00:20">12:00:20 P.M. -</action_time>
+<action_description>
+The Speaker designated the Honorable Mike Bost to act as Speaker pro tempore for today.
+</action_description>
+</floor_action>
+<floor_action act-id="H20100" update-date-time="20261117T12:04" unique-id="46566">
+<action_time for-search="20261117T12:00:00">12:00:00 P.M. -</action_time>
+<action_description>
+The House convened, starting a new legislative day.
+</action_description>
+</floor_action>
+</floor_actions>
+</legislative_activity>

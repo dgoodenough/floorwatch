@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<billStatus>
+  <version>3.0.0</version>
+  <bill>
+    <number>580</number>
+    <updateDate>2026-11-20T21:43:37Z</updateDate>
+    <updateDateIncludingText>2026-11-20T23:48:45Z</updateDateIncludingText>
+    <originChamber>Senate</originChamber>
+    <originChamberCode>S</originChamberCode>
+    <type>S</type>
+    <introducedDate>2025-02-13</introducedDate>
+    <congress>119</congress>
+    <legislationUrl>https://www.congress.gov/bill/119th-congress/senate-bill/580</legislationUrl>
+    <committees>
+      <item>
+        <systemCode>sscm00</systemCode>
+        <name>Commerce, Science, and Transportation Committee</name>
+        <chamber>Senate</chamber>
+        <type>Standing</type>
+        <activities>
+          <item>
+            <name>Reported By</name>
+            <date>2025-07-28T21:40:27Z</date>
+          </item>
+          <item>
+            <name>Markup By</name>
+            <date>2025-04-30T14:00:02Z</date>
+          </item>
+          <item>
+            <name>Referred To</name>
+            <date>2025-02-13T18:09:47Z</date>
+          </item>
+        </activities>
+      </item>
+    </committees>
+    <committeeReports>
+      <committeeReport>
+        <citation>S. Rept. 119-48</citation>
+      </committeeReport>
+    </committeeReports>
+    <actions>
+      <item>
+        <actionDate>2026-11-19</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Passed Senate with an amendment and an amendment to the Title by Unanimous Consent.</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-11-19</actionDate>
+        <text>Passed/agreed to in Senate: Passed Senate with an amendment and an amendment to the Title by Unanimous Consent.</text>
+        <type>Floor</type>
+        <actionCode>17000</actionCode>
+        <sourceSystem>
+          <code>9</code>
+          <name>Library of Congress</name>
+        </sourceSystem>
+      </item>
+      <item>
+        <actionDate>2026-11-19</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Measure laid before Senate by unanimous consent.</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2025-07-28</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Placed on Senate Legislative Calendar under General Orders. Calendar No. 129.</text>
+        <type>Calendars</type>
+      </item>
+      <item>
+        <actionDate>2025-07-28</actionDate>
+        <committees>
+          <item>
+            <systemCode>sscm00</systemCode>
+            <name>Commerce, Science, and Transportation Committee</name>
+          </item>
+        </committees>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Committee on Commerce, Science, and Transportation. Reported by Senator Cruz without amendment. With written report No. 119-48.</text>
+        <type>Committee</type>
+      </item>
+      <item>
+        <actionDate>2025-07-28</actionDate>
+        <text>Committee on Commerce, Science, and Transportation. Reported by Senator Cruz without amendment. With written report No. 119-48.</text>
+        <type>Committee</type>
+        <actionCode>14000</actionCode>
+        <sourceSystem>
+          <code>9</code>
+          <name>Library of Congress</name>
+        </sourceSystem>
+        <committees>
+          <item>
+            <systemCode>sscm00</systemCode>
+            <name>Commerce, Science, and Transportation Committee</name>
+          </item>
+        </committees>
+      </item>
+      <item>
+        <actionDate>2025-04-30</actionDate>
+        <committees>
+          <item>
+            <systemCode>sscm00</systemCode>
+            <name>Commerce, Science, and Transportation Committee</name>
+          </item>
+        </committees>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Committee on Commerce, Science, and Transportation. Ordered to be reported without amendment favorably.</text>
+        <type>Committee</type>
+      </item>
+      <item>
+        <actionDate>2025-02-13</actionDate>
+        <committees>
+          <item>
+            <systemCode>sscm00</systemCode>
+            <name>Commerce, Science, and Transportation Committee</name>
+          </item>
+        </committees>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Read twice and referred to the Committee on Commerce, Science, and Transportation.</text>
+        <type>IntroReferral</type>
+      </item>
+      <item>
+        <actionDate>2025-02-13</actionDate>
+        <text>Introduced in Senate</text>
+        <type>IntroReferral</type>
+        <actionCode>10000</actionCode>
+        <sourceSystem>
+          <code>9</code>
+          <name>Library of Congress</name>
+        </sourceSystem>
+      </item>
+    </actions>
+    <sponsors>
+      <item>
+        <bioguideId>P000595</bioguideId>
+        <fullName>Sen. Peters, Gary C. [D-MI]</fullName>
+        <firstName>Gary</firstName>
+        <lastName>Peters</lastName>
+        <party>D</party>
+        <state>MI</state>
+        <isByRequest>N</isByRequest>
+      </item>
+    </sponsors>
+    <cosponsors>
+      <item>
+        <bioguideId>L000571</bioguideId>
+        <fullName>Sen. Lummis, Cynthia M. [R-WY]</fullName>
+        <firstName>Cynthia</firstName>
+        <lastName>Lummis</lastName>
+        <party>R</party>
+        <state>WY</state>
+        <middleName>M.</middleName>
+        <sponsorshipDate>2025-02-13</sponsorshipDate>
+        <isOriginalCosponsor>True</isOriginalCosponsor>
+      </item>
+      <item>
+        <bioguideId>C001114</bioguideId>
+        <fullName>Sen. Curtis, John R. [R-UT]</fullName>
+        <firstName>John</firstName>
+        <lastName>Curtis</lastName>
+        <party>R</party>
+        <state>UT</state>
+        <middleName>R.</middleName>
+        <sponsorshipDate>2025-02-13</sponsorshipDate>
+        <isOriginalCosponsor>True</isOriginalCosponsor>
+      </item>
+    </cosponsors>
+    <cboCostEstimates>
+      <item>
+        <pubDate>2025-07-25T19:12:00Z</pubDate>
+        <title>S. 580, Combating CCP Labor Abuses Act of 2025</title>
+        <url>https://www.cbo.gov/publication/61594</url>
+        <description>As ordered reported by the Senate Committee on Commerce, Science, and Transportation on April 30, 2025</description>
+      </item>
+    </cboCostEstimates>
+    <policyArea>
+      <name>International Affairs</name>
+    </policyArea>
+    <subjects>
+      <legislativeSubjects>
+        <item>
+          <name>Asia</name>
+          <updateDate>2025-05-14T13:11:46Z</updateDate>
+        </item>
+        <item>
+          <name>China</name>
+          <updateDate>2025-05-14T13:11:36Z</updateDate>
+        </item>
+        <item>
+          <name>Department of Commerce</name>
+          <updateDate>2025-05-14T13:11:36Z</updateDate>
+        </item>
+        <item>
+          <name>Employment and training programs</name>
+          <updateDate>2025-05-14T13:11:36Z</updateDate>
+        </item>
+        <item>
+          <name>Human rights</name>
+          <updateDate>2025-05-14T13:11:36Z</updateDate>
+        </item>
+        <item>
+          <name>U.S. and foreign investments</name>
+          <updateDate>2025-05-14T13:11:36Z</updateDate>
+        </item>
+      </legislativeSubjects>
+      <policyArea>
+        <name>International Affairs</name>
+        <updateDate>2025-05-08T15:33:32Z</updateDate>
+      </policyArea>
+    </subjects>
+    <title>Combating CCP Labor Abuses Act of 2026</title>
+    <titles>
+      <item>
+        <titleType>Display Title</titleType>
+        <titleTypeCode>45</titleTypeCode>
+        <title>Combating CCP Labor Abuses Act of 2026</title>
+        <updateDate>2026-11-20T21:43:37Z</updateDate>
+      </item>
+      <item>
+        <titleType>Short Title(s) as Passed Senate</titleType>
+        <titleTypeCode>105</titleTypeCode>
+        <title>Combating CCP Labor Abuses Act of 2026</title>
+        <updateDate>2026-11-20T13:53:33Z</updateDate>
+        <chamberCode>S</chamberCode>
+        <chamberName>Senate</chamberName>
+        <billTextVersionName>Engrossed in Senate</billTextVersionName>
+        <billTextVersionCode>ES</billTextVersionCode>
+      </item>
+      <item>
+        <titleType>Official Titles as Amended by Senate</titleType>
+        <titleTypeCode>8</titleTypeCode>
+        <title>A bill to require the Secretary of Commerce to provide training and guidance relating to violations of human rights, including such abuses perpetrated against Uyghur and other religious and ethnic minority groups by the Government of the People's Republic of China, and for other purposes.</title>
+        <updateDate>2026-11-20T11:57:20Z</updateDate>
+        <chamberCode>S</chamberCode>
+        <chamberName>Senate</chamberName>
+      </item>
+      <item>
+        <titleType>Short Title(s) as Reported to Senate</titleType>
+        <titleTypeCode>103</titleTypeCode>
+        <title>Combating CCP Labor Abuses Act of 2025</title>
+        <updateDate>2025-07-30T06:38:22Z</updateDate>
+        <chamberCode>S</chamberCode>
+        <chamberName>Senate</chamberName>
+        <billTextVersionName>Reported to Senate</billTextVersionName>
+        <billTextVersionCode>RS</billTextVersionCode>
+      </item>
+      <item>
+        <titleType>Short Title(s) as Introduced</titleType>
+        <titleTypeCode>101</titleTypeCode>
+        <title>Combating CCP Labor Abuses Act of 2025</title>
+        <updateDate>2025-03-12T02:38:22Z</updateDate>
+        <billTextVersionName>Introduced in Senate</billTextVersionName>
+        <billTextVersionCode>IS</billTextVersionCode>
+      </item>
+      <item>
+        <titleType>Official Title as Introduced</titleType>
+        <titleTypeCode>6</titleTypeCode>
+        <title>A bill to require the Secretary of Commerce to provide training and guidance relating to human rights abuses, including such abuses perpetrated against the Uyghur population by the Government of the People's Republic of China, and for other purposes.</title>
+        <updateDate>2025-03-12T02:33:18Z</updateDate>
+        <billTextVersionName>Introduced in Senate</billTextVersionName>
+        <billTextVersionCode>IS</billTextVersionCode>
+      </item>
+    </titles>
+    <amendments>
+      <amendment>
+        <number>7034</number>
+        <congress>119</congress>
+        <type>SAMDT</type>
+        <purpose>To amend the title.</purpose>
+        <updateDate>2026-11-20T16:32:59Z</updateDate>
+        <latestAction>
+          <actionDate>2026-11-19</actionDate>
+          <text>Amendment SA 7034 agreed to in Senate by Unanimous Consent.</text>
+          <links>
+            <link>
+              <name>SA 7034</name>
+              <url>https://www.congress.gov/amendment/119th-congress/senate-amendment/7034</url>
+            </link>
+          </links>
+        </latestAction>
+        <sponsors>
+          <item>
+            <bioguideId>P000595</bioguideId>
+            <fullName>Sen. Peters, Gary C. [D-MI]</fullName>
+            <firstName>Gary</firstName>
+            <lastName>Peters</lastName>
+            <party>D</party>
+            <state>MI</state>
+          </item>
+        </sponsors>
+        <onBehalfOfSponsor>
+          <item>
+            <bioguideId>M001242</bioguideId>
+            <fullName>Sen. Moreno, Bernie [R-OH]</fullName>
+            <firstName>Bernie</firstName>
+            <lastName>Moreno</lastName>
+            <party>R</party>
+            <state>OH</state>
+            <type>Submitted on behalf of</type>
+          </item>
+          <item>
+            <bioguideId>M001242</bioguideId>
+            <fullName>Sen. Moreno, Bernie [R-OH]</fullName>
+            <firstName>Bernie</firstName>
+            <lastName>Moreno</lastName>
+            <party>R</party>
+            <state>OH</state>
+            <type>Proposed on behalf of</type>
+          </item>
+        </onBehalfOfSponsor>
+        <proposedDate>2026-11-19T05:00:00Z</proposedDate>
+        <submittedDate>2026-11-19T05:00:00Z</submittedDate>
+        <chamber>Senate</chamber>
+        <amendedBill>
+          <congress>119</congress>
+          <type>S</type>
+          <originChamber>Senate</originChamber>
+          <originChamberCode>S</originChamberCode>
+          <number>580</number>
+          <title>Combating CCP Labor Abuses Act of 2026</title>
+          <updateDateIncludingText>2026-11-20</updateDateIncludingText>
+        </amendedBill>
+        <actions>
+          <count>6</count>
+          <actions>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <sourceSystem>
+                <code>0</code>
+                <name>Senate</name>
+              </sourceSystem>
+              <text>Amendment SA 7034 agreed to in Senate by Unanimous Consent.</text>
+              <type>Floor</type>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <sourceSystem>
+                <code>0</code>
+                <name>Senate</name>
+              </sourceSystem>
+              <text>Amendment SA 7034 proposed by Senator Moreno for Senator Peters. To amend the title. (consideration: CR S5796-5797)</text>
+              <type>Floor</type>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <type>IntroReferral</type>
+              <actionCode>Intro-S</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <text>Senate amendment submitted</text>
+              <type>Floor</type>
+              <actionCode>91000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <text>Senate amendment proposed (on the floor): Amendment SA 7034 proposed by Senator Moreno for Senator Peters.</text>
+              <type>Floor</type>
+              <actionCode>93000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <text>Senate amendment agreed to: Amendment SA 7034 agreed to in Senate by Unanimous Consent.</text>
+              <type>Floor</type>
+              <actionCode>94000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+          </actions>
+        </actions>
+        <textVersions>
+          <count>1</count>
+        </textVersions>
+      </amendment>
+      <amendment>
+        <number>7033</number>
+        <congress>119</congress>
+        <type>SAMDT</type>
+        <purpose>In the nature of a substitute.</purpose>
+        <updateDate>2026-11-20T16:13:25Z</updateDate>
+        <latestAction>
+          <actionDate>2026-11-19</actionDate>
+          <text>Amendment SA 7033 agreed to in Senate by Unanimous Consent.</text>
+          <links>
+            <link>
+              <name>SA 7033</name>
+              <url>https://www.congress.gov/amendment/119th-congress/senate-amendment/7033</url>
+            </link>
+          </links>
+        </latestAction>
+        <sponsors>
+          <item>
+            <bioguideId>P000595</bioguideId>
+            <fullName>Sen. Peters, Gary C. [D-MI]</fullName>
+            <firstName>Gary</firstName>
+            <lastName>Peters</lastName>
+            <party>D</party>
+            <state>MI</state>
+          </item>
+        </sponsors>
+        <onBehalfOfSponsor>
+          <item>
+            <bioguideId>M001242</bioguideId>
+            <fullName>Sen. Moreno, Bernie [R-OH]</fullName>
+            <firstName>Bernie</firstName>
+            <lastName>Moreno</lastName>
+            <party>R</party>
+            <state>OH</state>
+            <type>Submitted on behalf of</type>
+          </item>
+          <item>
+            <bioguideId>M001242</bioguideId>
+            <fullName>Sen. Moreno, Bernie [R-OH]</fullName>
+            <firstName>Bernie</firstName>
+            <lastName>Moreno</lastName>
+            <party>R</party>
+            <state>OH</state>
+            <type>Proposed on behalf of</type>
+          </item>
+        </onBehalfOfSponsor>
+        <proposedDate>2026-11-19T05:00:00Z</proposedDate>
+        <submittedDate>2026-11-19T05:00:00Z</submittedDate>
+        <chamber>Senate</chamber>
+        <amendedBill>
+          <congress>119</congress>
+          <type>S</type>
+          <originChamber>Senate</originChamber>
+          <originChamberCode>S</originChamberCode>
+          <number>580</number>
+          <title>Combating CCP Labor Abuses Act of 2026</title>
+          <updateDateIncludingText>2026-11-20</updateDateIncludingText>
+        </amendedBill>
+        <actions>
+          <count>6</count>
+          <actions>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <sourceSystem>
+                <code>0</code>
+                <name>Senate</name>
+              </sourceSystem>
+              <text>Amendment SA 7033 agreed to in Senate by Unanimous Consent.</text>
+              <type>Floor</type>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <sourceSystem>
+                <code>0</code>
+                <name>Senate</name>
+              </sourceSystem>
+              <text>Amendment SA 7033 proposed by Senator Moreno for Senator Peters. In the nature of a substitute. (consideration: CR S5796-5797)</text>
+              <type>Floor</type>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <type>IntroReferral</type>
+              <actionCode>Intro-S</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <text>Senate amendment submitted</text>
+              <type>Floor</type>
+              <actionCode>91000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <text>Senate amendment proposed (on the floor): Amendment SA 7033 proposed by Senator Moreno for Senator Peters.</text>
+              <type>Floor</type>
+              <actionCode>93000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-11-19</actionDate>
+              <text>Senate amendment agreed to: Amendment SA 7033 agreed to in Senate by Unanimous Consent.</text>
+              <type>Floor</type>
+              <actionCode>94000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+          </actions>
+        </actions>
+        <textVersions>
+          <count>1</count>
+        </textVersions>
+      </amendment>
+    </amendments>
+    <textVersions>
+      <item>
+        <type>Engrossed in Senate</type>
+        <date>2026-11-19T05:00:00Z</date>
+        <formats>
+          <item>
+            <url>https://www.govinfo.gov/content/pkg/BILLS-119s580es/xml/BILLS-119s580es.xml</url>
+          </item>
+        </formats>
+      </item>
+      <item>
+        <type>Reported to Senate</type>
+        <date>2025-07-28T04:00:00Z</date>
+        <formats>
+          <item>
+            <url>https://www.govinfo.gov/content/pkg/BILLS-119s580rs/xml/BILLS-119s580rs.xml</url>
+          </item>
+        </formats>
+      </item>
+      <item>
+        <type>Introduced in Senate</type>
+        <date>2025-02-13T05:00:00Z</date>
+        <formats>
+          <item>
+            <url>https://www.govinfo.gov/content/pkg/BILLS-119s580is/xml/BILLS-119s580is.xml</url>
+          </item>
+        </formats>
+      </item>
+    </textVersions>
+    <latestAction>
+      <actionDate>2026-11-19</actionDate>
+      <text>Passed Senate with an amendment and an amendment to the Title by Unanimous Consent.</text>
+    </latestAction>
+  </bill>
+  <dublinCore xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:format>text/xml</dc:format>
+    <dc:language>EN</dc:language>
+    <dc:rights>Pursuant to Title 17 Section 105 of the United States Code, this file is not subject to copyright protection and is in the public domain.</dc:rights>
+    <dc:contributor>Congressional Research Service, Library of Congress</dc:contributor>
+    <dc:description>This file contains bill summaries and statuses for federal legislation. A bill summary describes the most significant provisions of a piece of legislation and details the effects the legislative text may have on current law and federal programs. Bill summaries are authored by the Congressional Research Service (CRS) of the Library of Congress. As stated in Public Law 91-510 (2 USC 166 (d)(6)), one of the duties of CRS is "to prepare summaries and digests of bills and resolutions of a public general nature introduced in the Senate or House of Representatives". For more information, refer to the User Guide that accompanies this file.</dc:description>
+  </dublinCore>
+</billStatus>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><css_meetings_scheduled>
+  <meeting>
+    <cmte_code/>
+    <committee/>
+    <type/>
+    <date>21-NOV-2026</date>
+    <date_iso_8601>2026-11-21</date_iso_8601>
+    <day_of_week>Today</day_of_week>
+    <time>02:00:00</time>
+    <room/>
+    <matter>No committee hearings scheduled</matter>
+    <video_url/>
+    <senate_cable_channel/>
+  </meeting>
+  <meeting>
+    <identifier>338860</identifier>
+    <last_update>11-20-2026 04:37:27 PM</last_update>
+    <last_update_iso_8601>2026-11-20T16:37:27.000000Z-05:00</last_update_iso_8601>
+    <cmte_code>SSCM00</cmte_code>
+    <committee>Commerce, Science, and Transportation</committee>
+    <type>Open Hearing</type>
+    <date>01-DEC-2026 10:00 AM</date>
+    <date_iso_8601>2026-12-01</date_iso_8601>
+    <day_of_week>Tuesday</day_of_week>
+    <time>10:00 AM</time>
+    <time_iso_8601>10:00:00</time_iso_8601>
+    <room>SR-253</room>
+    <video_url>https://www.senate.gov/isvp/?comm=commerce&amp;filename=commerce112426</video_url>
+    <senate_cable_channel>
+    </senate_cable_channel>
+    <Documents>
+      <AssociatedDocument congress="119" document_description="Christopher Mufarrige, of Texas, to be a Federal Trade Commissioner for the term of seven years from September 26, 2026, vice Alvaro M. Bedoya, term expired. " document_num="1425" document_prefix="PN"/>
+      <AssociatedDocument congress="119" document_description="Loren Smith, Jr., of Virginia, to be an Assistant Secretary of Transportation, vice Christopher A. Coes, resigned." document_num="1430" document_prefix="PN" partition="09"/>
+      <AssociatedDocument congress="119" document_description="Peter A. Feldman, of the District of Columbia, to be a Commissioner of the Consumer Product Safety Commission for a term of seven years from October 27, 2026. (Reappointment)" document_num="1479" document_prefix="PN" partition="09"/>
+    </Documents>
+    <matter>Hearings to examine the nominations of Peter A. Feldman, of the District of Columbia, to be a Commissioner of the Consumer Product Safety Commission, Christopher Mufarrige, of Texas, to be a Federal Trade Commissioner, and Loren Smith, Jr., of Virginia, to be an Assistant Secretary of Transportation.</matter>
+  </meeting>
+  <meeting>
+    <identifier>338881</identifier>
+    <last_update>11-20-2026 03:27:52 PM</last_update>
+    <last_update_iso_8601>2026-11-20T15:27:52.000000Z-05:00</last_update_iso_8601>
+    <cmte_code>SLIN00</cmte_code>
+    <committee>Intelligence</committee>
+    <type>Closed Business Meeting</type>
+    <date>01-DEC-2026 02:00 PM</date>
+    <date_iso_8601>2026-12-01</date_iso_8601>
+    <day_of_week>Tuesday</day_of_week>
+    <time>02:00 PM</time>
+    <time_iso_8601>14:00:00</time_iso_8601>
+    <room>TBA</room>
+    <video_url>
+    </video_url>
+    <senate_cable_channel>
+    </senate_cable_channel>
+    <Documents/>
+    <matter>Closed business meeting to consider certain intelligence matters.</matter>
+  </meeting>
+  <meeting>
+    <identifier>338882</identifier>
+    <last_update>11-20-2026 03:29:24 PM</last_update>
+    <last_update_iso_8601>2026-11-20T15:29:24.000000Z-05:00</last_update_iso_8601>
+    <cmte_code>SLIN00</cmte_code>
+    <committee>Intelligence</committee>
+    <type>Closed Hearing</type>
+    <date>01-DEC-2026 03:00 PM</date>
+    <date_iso_8601>2026-12-01</date_iso_8601>
+    <day_of_week>Tuesday</day_of_week>
+    <time>03:00 PM</time>
+    <time_iso_8601>15:00:00</time_iso_8601>
+    <room>SH-219</room>
+    <video_url>
+    </video_url>
+    <senate_cable_channel>
+    </senate_cable_channel>
+    <Documents/>
+    <matter>To receive a closed briefing on certain intelligence matters.</matter>
+  </meeting>
+  <meeting>
+    <identifier>338883</identifier>
+    <last_update>11-20-2026 03:31:16 PM</last_update>
+    <last_update_iso_8601>2026-11-20T15:31:16.000000Z-05:00</last_update_iso_8601>
+    <cmte_code>SLIN00</cmte_code>
+    <committee>Intelligence</committee>
+    <type>Closed Hearing</type>
+    <date>02-DEC-2026 03:00 PM</date>
+    <date_iso_8601>2026-12-02</date_iso_8601>
+    <day_of_week>Wednesday</day_of_week>
+    <time>03:00 PM</time>
+    <time_iso_8601>15:00:00</time_iso_8601>
+    <room>SH-219</room>
+    <video_url>
+    </video_url>
+    <senate_cable_channel>
+    </senate_cable_channel>
+    <Documents/>
+    <matter>To receive a closed briefing on certain intelligence matters.</matter>
+  </meeting>
+  <meeting>
+    <identifier>338880</identifier>
+    <last_update>11-19-2026 01:12:23 PM</last_update>
+    <last_update_iso_8601>2026-11-19T13:12:23.000000Z-05:00</last_update_iso_8601>
+    <cmte_code>SPAG00</cmte_code>
+    <committee>Aging</committee>
+    <type>Open Hearing</type>
+    <date>02-DEC-2026 03:30 PM</date>
+    <date_iso_8601>2026-12-02</date_iso_8601>
+    <day_of_week>Wednesday</day_of_week>
+    <time>03:30 PM</time>
+    <time_iso_8601>15:30:00</time_iso_8601>
+    <room>SD-G50</room>
+    <video_url>https://www.senate.gov/isvp/?comm=aging&amp;filename=aging120226</video_url>
+    <senate_cable_channel>
+    </senate_cable_channel>
+    <Documents/>
+    <matter>Hearings to examine caregivers and AI, focusing on opportunities, challenges, and threats.</matter>
+  </meeting>
+</css_meetings_scheduled>
