@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<billStatus>
+  <version>3.0.0</version>
+  <bill>
+    <number>817</number>
+    <updateDate>2026-08-03T17:50:30Z</updateDate>
+    <updateDateIncludingText>2026-08-03T17:50:30Z</updateDateIncludingText>
+    <originChamber>Senate</originChamber>
+    <originChamberCode>S</originChamberCode>
+    <type>SRES</type>
+    <introducedDate>2026-07-23</introducedDate>
+    <congress>119</congress>
+    <legislationUrl>https://www.congress.gov/bill/119th-congress/senate-resolution/817</legislationUrl>
+    <actions>
+      <item>
+        <actionDate>2026-07-30</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Resolution agreed to in Senate without amendment by Yea-Nay Vote. 50 - 47. Record Vote Number: 217.</text>
+        <type>Floor</type>
+        <recordedVotes>
+          <recordedVote>
+            <rollNumber>217</rollNumber>
+            <url>https://www.senate.gov/legislative/LIS/roll_call_votes/vote1192/vote_119_2_00217.xml</url>
+            <chamber>Senate</chamber>
+            <congress>119</congress>
+            <date>2026-07-30T18:27:48Z</date>
+            <sessionNumber>2</sessionNumber>
+          </recordedVote>
+        </recordedVotes>
+      </item>
+      <item>
+        <actionDate>2026-07-30</actionDate>
+        <text>Passed/agreed to in Senate: Resolution agreed to in Senate without amendment by Yea-Nay Vote. 50 - 47. Record Vote Number: 217.</text>
+        <type>Floor</type>
+        <actionCode>17000</actionCode>
+        <sourceSystem>
+          <code>9</code>
+          <name>Library of Congress</name>
+        </sourceSystem>
+        <recordedVotes>
+          <recordedVote>
+            <rollNumber>217</rollNumber>
+            <url>https://www.senate.gov/legislative/LIS/roll_call_votes/vote1192/vote_119_2_00217.xml</url>
+            <chamber>Senate</chamber>
+            <congress>119</congress>
+            <date>2026-07-30T18:27:48Z</date>
+            <sessionNumber>2</sessionNumber>
+          </recordedVote>
+        </recordedVotes>
+      </item>
+      <item>
+        <actionDate>2026-07-30</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Considered by Senate. (consideration: CR S4353, S4360)</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-29</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>By unanimous consent agreement, vote 7/30/2026.</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-29</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Considered by Senate. (consideration: CR S4323)</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-29</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Cloture on the measure invoked in Senate by Yea-Nay Vote. 50 - 45. Record Vote Number: 214. (CR S4323)</text>
+        <type>Floor</type>
+        <recordedVotes>
+          <recordedVote>
+            <rollNumber>214</rollNumber>
+            <url>https://www.senate.gov/legislative/LIS/roll_call_votes/vote1192/vote_119_2_00214.xml</url>
+            <chamber>Senate</chamber>
+            <congress>119</congress>
+            <date>2026-07-29T23:50:06Z</date>
+            <sessionNumber>2</sessionNumber>
+          </recordedVote>
+        </recordedVotes>
+      </item>
+      <item>
+        <actionDate>2026-07-29</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>By unanimous consent agreement, debate and vote mandatory quorum required under Rule XXII waived.</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-27</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Cloture motion on the measure presented in Senate. (CR S4276)</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-27</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Measure laid before Senate by motion. (consideration: CR S4276)</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-27</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Motion to proceed to executive session to consideration of measure agreed to in Senate by Voice Vote.</text>
+        <type>Floor</type>
+      </item>
+      <item>
+        <actionDate>2026-07-23</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Placed on Senate Executive Calendar under Over, Under the Rule. Calendar No. 6.</text>
+        <type>Calendars</type>
+      </item>
+      <item>
+        <actionDate>2026-07-23</actionDate>
+        <sourceSystem>
+          <name>Senate</name>
+        </sourceSystem>
+        <text>Submitted in the Senate Placed on Senate Executive Calendar under Over, Under the Rule. (text: CR S4272-4273)</text>
+        <type>IntroReferral</type>
+      </item>
+      <item>
+        <actionDate>2026-07-23</actionDate>
+        <text>Submitted in Senate</text>
+        <type>IntroReferral</type>
+        <actionCode>10025</actionCode>
+        <sourceSystem>
+          <code>9</code>
+          <name>Library of Congress</name>
+        </sourceSystem>
+      </item>
+    </actions>
+    <sponsors>
+      <item>
+        <bioguideId>T000250</bioguideId>
+        <fullName>Sen. Thune, John [R-SD]</fullName>
+        <firstName>John</firstName>
+        <lastName>Thune</lastName>
+        <party>R</party>
+        <state>SD</state>
+        <isByRequest>N</isByRequest>
+      </item>
+    </sponsors>
+    <policyArea>
+      <name>Congress</name>
+    </policyArea>
+    <subjects>
+      <legislativeSubjects>
+        <item>
+          <name>Diplomacy, foreign officials, Americans abroad</name>
+          <updateDate>2026-08-03T17:50:11Z</updateDate>
+        </item>
+        <item>
+          <name>Federal officials</name>
+          <updateDate>2026-08-03T17:49:34Z</updateDate>
+        </item>
+        <item>
+          <name>Judges</name>
+          <updateDate>2026-08-03T17:50:30Z</updateDate>
+        </item>
+        <item>
+          <name>Legislative rules and procedure</name>
+          <updateDate>2026-08-03T17:48:47Z</updateDate>
+        </item>
+        <item>
+          <name>Senate</name>
+          <updateDate>2026-08-03T17:48:55Z</updateDate>
+        </item>
+      </legislativeSubjects>
+      <policyArea>
+        <name>Congress</name>
+        <updateDate>2026-08-03T11:24:57Z</updateDate>
+      </policyArea>
+    </subjects>
+    <summaries>
+      <summary>
+        <versionCode>55</versionCode>
+        <actionDate>2026-07-30</actionDate>
+        <actionDesc>Passed Senate</actionDesc>
+        <updateDate>2026-08-03T14:54:17Z</updateDate>
+        <text><![CDATA[<p>This resolution provides for the en bloc consideration of nominations for various executive officers, judges,&nbsp;ambassadors, and related positions.</p><p>Agencies in which the executive officers shall serve include the Departments of Defense, Energy, the Interior, State, and the Treasury. Additional nominees shall represent the United States to, among others, the United Nations, the Organization&nbsp;for Economic Cooperation and Development (OECD), Brazil, Cambodia, Cyprus,&nbsp;and the Gambia. Nominees are also appointed to the National Labor Relations Board, National Transportation Safety Board, Consumer Product Safety Commission, and District of Columbia (DC) courts.</p>]]></text>
+      </summary>
+    </summaries>
+    <title>An executive resolution authorizing the en bloc consideration in Executive Session of certain nominations on the Executive Calendar.</title>
+    <titles>
+      <item>
+        <titleType>Display Title</titleType>
+        <titleTypeCode>45</titleTypeCode>
+        <title>An executive resolution authorizing the en bloc consideration in Executive Session of certain nominations on the Executive Calendar.</title>
+        <updateDate>2026-07-24T13:21:07Z</updateDate>
+      </item>
+      <item>
+        <titleType>Official Title as Introduced</titleType>
+        <titleTypeCode>6</titleTypeCode>
+        <title>An executive resolution authorizing the en bloc consideration in Executive Session of certain nominations on the Executive Calendar.</title>
+        <updateDate>2026-07-24T13:21:07Z</updateDate>
+      </item>
+    </titles>
+    <amendments>
+      <amendment>
+        <number>6709</number>
+        <congress>119</congress>
+        <type>SAMDT</type>
+        <updateDate>2026-07-28T11:08:28Z</updateDate>
+        <sponsors>
+          <item>
+            <bioguideId>T000250</bioguideId>
+            <fullName>Sen. Thune, John [R-SD]</fullName>
+            <firstName>John</firstName>
+            <lastName>Thune</lastName>
+            <party>R</party>
+            <state>SD</state>
+          </item>
+        </sponsors>
+        <submittedDate>2026-07-27T04:00:00Z</submittedDate>
+        <chamber>Senate</chamber>
+        <amendedBill>
+          <congress>119</congress>
+          <type>SRES</type>
+          <originChamber>Senate</originChamber>
+          <originChamberCode>S</originChamberCode>
+          <number>817</number>
+          <title>An executive resolution authorizing the en bloc consideration in Executive Session of certain nominations on the Executive Calendar.</title>
+          <updateDateIncludingText>2026-08-03</updateDateIncludingText>
+        </amendedBill>
+        <actions>
+          <count>2</count>
+          <actions>
+            <item>
+              <actionDate>2026-07-27</actionDate>
+              <type>IntroReferral</type>
+              <actionCode>Intro-S</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-07-27</actionDate>
+              <text>Senate amendment submitted</text>
+              <type>Floor</type>
+              <actionCode>91000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+          </actions>
+        </actions>
+        <textVersions>
+          <count>1</count>
+        </textVersions>
+      </amendment>
+      <amendment>
+        <number>6707</number>
+        <congress>119</congress>
+        <type>SAMDT</type>
+        <updateDate>2026-07-28T11:08:28Z</updateDate>
+        <sponsors>
+          <item>
+            <bioguideId>T000250</bioguideId>
+            <fullName>Sen. Thune, John [R-SD]</fullName>
+            <firstName>John</firstName>
+            <lastName>Thune</lastName>
+            <party>R</party>
+            <state>SD</state>
+          </item>
+        </sponsors>
+        <submittedDate>2026-07-27T04:00:00Z</submittedDate>
+        <chamber>Senate</chamber>
+        <amendedBill>
+          <congress>119</congress>
+          <type>SRES</type>
+          <originChamber>Senate</originChamber>
+          <originChamberCode>S</originChamberCode>
+          <number>817</number>
+          <title>An executive resolution authorizing the en bloc consideration in Executive Session of certain nominations on the Executive Calendar.</title>
+          <updateDateIncludingText>2026-08-03</updateDateIncludingText>
+        </amendedBill>
+        <amendedAmendment>
+          <number>6706</number>
+          <congress>119</congress>
+          <type>SAMDT</type>
+          <updateDate>2026-07-28T11:08:28Z</updateDate>
+        </amendedAmendment>
+        <actions>
+          <count>2</count>
+          <actions>
+            <item>
+              <actionDate>2026-07-27</actionDate>
+              <type>IntroReferral</type>
+              <actionCode>Intro-S</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-07-27</actionDate>
+              <text>Senate amendment submitted</text>
+              <type>Floor</type>
+              <actionCode>91000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+          </actions>
+        </actions>
+        <textVersions>
+          <count>1</count>
+        </textVersions>
+      </amendment>
+      <amendment>
+        <number>6706</number>
+        <congress>119</congress>
+        <type>SAMDT</type>
+        <updateDate>2026-07-28T11:08:28Z</updateDate>
+        <sponsors>
+          <item>
+            <bioguideId>T000250</bioguideId>
+            <fullName>Sen. Thune, John [R-SD]</fullName>
+            <firstName>John</firstName>
+            <lastName>Thune</lastName>
+            <party>R</party>
+            <state>SD</state>
+          </item>
+        </sponsors>
+        <submittedDate>2026-07-27T04:00:00Z</submittedDate>
+        <chamber>Senate</chamber>
+        <amendedBill>
+          <congress>119</congress>
+          <type>SRES</type>
+          <originChamber>Senate</originChamber>
+          <originChamberCode>S</originChamberCode>
+          <number>817</number>
+          <title>An executive resolution authorizing the en bloc consideration in Executive Session of certain nominations on the Executive Calendar.</title>
+          <updateDateIncludingText>2026-08-03</updateDateIncludingText>
+        </amendedBill>
+        <amendmentsToAmendment>
+          <count>1</count>
+        </amendmentsToAmendment>
+        <actions>
+          <count>2</count>
+          <actions>
+            <item>
+              <actionDate>2026-07-27</actionDate>
+              <type>IntroReferral</type>
+              <actionCode>Intro-S</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+            <item>
+              <actionDate>2026-07-27</actionDate>
+              <text>Senate amendment submitted</text>
+              <type>Floor</type>
+              <actionCode>91000</actionCode>
+              <sourceSystem>
+                <code>9</code>
+                <name>Library of Congress</name>
+              </sourceSystem>
+            </item>
+          </actions>
+        </actions>
+        <textVersions>
+          <count>1</count>
+        </textVersions>
+      </amendment>
+    </amendments>
+    <textVersions>
+      <item>
+        <type>Agreed to Senate</type>
+        <date>2026-07-30T04:00:00Z</date>
+        <formats>
+          <item>
+            <url>https://www.govinfo.gov/content/pkg/BILLS-119sres817ats/xml/BILLS-119sres817ats.xml</url>
+          </item>
+        </formats>
+      </item>
+      <item>
+        <type>Placed on Calendar Senate</type>
+        <date>2026-07-23T04:00:00Z</date>
+        <formats>
+          <item>
+            <url>https://www.govinfo.gov/content/pkg/BILLS-119sres817pcs/xml/BILLS-119sres817pcs.xml</url>
+          </item>
+        </formats>
+      </item>
+    </textVersions>
+    <latestAction>
+      <actionDate>2026-07-30</actionDate>
+      <text>Resolution agreed to in Senate without amendment by Yea-Nay Vote. 50 - 47. Record Vote Number: 217.</text>
+    </latestAction>
+  </bill>
+  <dublinCore xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:format>text/xml</dc:format>
+    <dc:language>EN</dc:language>
+    <dc:rights>Pursuant to Title 17 Section 105 of the United States Code, this file is not subject to copyright protection and is in the public domain.</dc:rights>
+    <dc:contributor>Congressional Research Service, Library of Congress</dc:contributor>
+    <dc:description>This file contains bill summaries and statuses for federal legislation. A bill summary describes the most significant provisions of a piece of legislation and details the effects the legislative text may have on current law and federal programs. Bill summaries are authored by the Congressional Research Service (CRS) of the Library of Congress. As stated in Public Law 91-510 (2 USC 166 (d)(6)), one of the duties of CRS is "to prepare summaries and digests of bills and resolutions of a public general nature introduced in the Senate or House of Representatives". For more information, refer to the User Guide that accompanies this file.</dc:description>
+  </dublinCore>
+</billStatus>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<legislative_activity>
+<legislative_header>CURRENT HOUSE FLOOR PROCEEDINGS</legislative_header>
+<legislative_day date="20261124" previous-legislative-day-convened="20261120T10:30:00">LEGISLATIVE DAY OF NOVEMBER 24, 2026 </legislative_day>
+<legislative_congress congress="119" session="2"> 119TH CONGRESS - SECOND SESSION </legislative_congress>
+<language>en-us</language>
+<copyright>Pursuant to Title 17 Section 105 of the United States Code, this file is not subject to copyright protection and is in the public domain.</copyright>
+<pubDate>Wed, 25 Nov 2026 23:45:01 EST</pubDate>
+<floor_actions>
+<legislative_day_finished next-legislative-day-convenes="20261127T12:00">Yes</legislative_day_finished>
+<floor_action act-id="H61000" update-date-time="20261124T12:03" unique-id="47189">
+<action_time for-search="20261124T12:03:26">12:03:26 P.M. -</action_time>
+<action_description>
+The Speaker announced that the House do now adjourn pursuant to clause 13 of Rule I. The next meeting is scheduled for 12:00 p.m. on November 27, 2026.
+</action_description>
+</floor_action>
+<floor_action act-id="H2C000" update-date-time="20261124T12:02" unique-id="47187">
+<action_time for-search="20261124T12:02:37">12:02:37 P.M. -</action_time>
+<action_description>
+PLEDGE OF ALLEGIANCE - The Chair led the House in reciting the Pledge of Allegiance to the Flag.
+</action_description>
+</floor_action>
+<floor_action act-id="H8D000" update-date-time="20261124T12:02" unique-id="47186">
+<action_time for-search="20261124T12:02:18">12:02:18 P.M. -</action_time>
+<action_description>
+SPEAKER'S APPROVAL OF THE JOURNAL - Pursuant to clause 13 of Rule I, the Journal of the last day's proceedings was approved.
+</action_description>
+</floor_action>
+<floor_action act-id="H21000" update-date-time="20261124T12:00" unique-id="47185">
+<action_time for-search="20261124T12:00:54">12:00:54 P.M. -</action_time>
+<action_description>
+Today's prayer was offered by the House Chaplain, Chaplain Margaret Grun Kibben.
+</action_description>
+</floor_action>
+<floor_action act-id="H22000" update-date-time="20261124T12:00" unique-id="47184">
+<action_time for-search="20261124T12:00:37">12:00:37 P.M. -</action_time>
+<action_description>
+The Speaker designated the Honorable Adrian Smith to act as Speaker pro tempore for today.
+</action_description>
+</floor_action>
+<floor_action act-id="H20100" update-date-time="20261124T12:00" unique-id="47169">
+<action_time for-search="20261124T12:00:00">12:00:00 P.M. -</action_time>
+<action_description>
+The House convened, starting a new legislative day.
+</action_description>
+</floor_action>
+</floor_actions>
+</legislative_activity>
